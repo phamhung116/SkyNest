@@ -4,11 +4,17 @@ import type {
   AuthResult,
   AvailabilityDay,
   Booking,
+  BookingCancelPayload,
   BookingCreatePayload,
+  ChangePasswordPayload,
+  EmailAuthStartPayload,
+  EmailAuthStartResult,
   LoginPayload,
   PaymentSession,
   PaymentTransaction,
   Post,
+  RegisterResult,
+  ResendVerificationResult,
   RegisterPayload,
   ServicePackage,
   Tracking,
@@ -20,7 +26,22 @@ export const createCustomerApi = (baseUrl: string, getAccessToken?: () => string
 
   return {
     register: (payload: RegisterPayload) =>
-      http.request<AuthResult>("/auth/register/", {
+      http.request<RegisterResult>("/auth/register/", {
+        method: "POST",
+        body: JSON.stringify(payload)
+      }),
+    verifyEmail: (token: string) =>
+      http.request<AuthResult>("/auth/verify-email/", {
+        method: "POST",
+        body: JSON.stringify({ token })
+      }),
+    resendVerificationEmail: (email: string) =>
+      http.request<ResendVerificationResult>("/auth/resend-verification/", {
+        method: "POST",
+        body: JSON.stringify({ email })
+      }),
+    startEmailAuth: (payload: EmailAuthStartPayload) =>
+      http.request<EmailAuthStartResult>("/auth/email/start/", {
         method: "POST",
         body: JSON.stringify(payload)
       }),
@@ -39,7 +60,17 @@ export const createCustomerApi = (baseUrl: string, getAccessToken?: () => string
         method: "PATCH",
         body: JSON.stringify(payload)
       }),
+    changePassword: (payload: ChangePasswordPayload) =>
+      http.request<Account>("/auth/me/password/", {
+        method: "POST",
+        body: JSON.stringify(payload)
+      }),
     getMyBookings: () => http.request<Booking[]>("/auth/bookings/"),
+    cancelMyBooking: (code: string, payload: BookingCancelPayload) =>
+      http.request<Booking>(`/auth/bookings/${code}/cancel/`, {
+        method: "POST",
+        body: JSON.stringify(payload)
+      }),
     listServices: (featured = false) =>
       http.request<ServicePackage[]>(`/services/${featured ? "?featured=true" : ""}`),
     getService: (slug: string) => http.request<ServicePackage>(`/services/${slug}/`),

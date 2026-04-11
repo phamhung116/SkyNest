@@ -1,12 +1,12 @@
 import { Navigate, Route, Routes } from "react-router-dom";
 import { useAdminAuth } from "@/app/providers/auth-provider";
+import { AccountDetailPage } from "@/pages/accounts/detail";
 import { AccountsPage } from "@/pages/accounts";
-import { BookingRequestsPage } from "@/pages/booking-requests";
+import { BookingDetailPage } from "@/pages/bookings/detail";
 import { BookingsPage } from "@/pages/bookings";
 import { LoginPage } from "@/pages/login";
+import { PostDetailPage } from "@/pages/posts/detail";
 import { PostsPage } from "@/pages/posts";
-import { ServiceDetailPage } from "@/pages/service-detail";
-import { ServicesPage } from "@/pages/services";
 import { routes } from "@/shared/config/routes";
 
 const ProtectedRoute = ({ children }: { children: JSX.Element }) => {
@@ -24,15 +24,7 @@ export const AppRouter = () => (
       path="/"
       element={
         <ProtectedRoute>
-          <Navigate to={routes.bookingRequests} replace />
-        </ProtectedRoute>
-      }
-    />
-    <Route
-      path={routes.bookingRequests}
-      element={
-        <ProtectedRoute>
-          <BookingRequestsPage />
+          <Navigate to={routes.bookings} replace />
         </ProtectedRoute>
       }
     />
@@ -45,10 +37,26 @@ export const AppRouter = () => (
       }
     />
     <Route
+      path={routes.bookingDetail}
+      element={
+        <ProtectedRoute>
+          <BookingDetailPage />
+        </ProtectedRoute>
+      }
+    />
+    <Route
       path={routes.accounts}
       element={
         <ProtectedRoute>
           <AccountsPage />
+        </ProtectedRoute>
+      }
+    />
+    <Route
+      path={routes.accountDetail}
+      element={
+        <ProtectedRoute>
+          <AccountDetailPage />
         </ProtectedRoute>
       }
     />
@@ -61,18 +69,10 @@ export const AppRouter = () => (
       }
     />
     <Route
-      path={routes.services}
+      path="/posts/:slug"
       element={
         <ProtectedRoute>
-          <ServicesPage />
-        </ProtectedRoute>
-      }
-    />
-    <Route
-      path="/services/:slug"
-      element={
-        <ProtectedRoute>
-          <ServiceDetailPage />
+          <PostDetailPage />
         </ProtectedRoute>
       }
     />

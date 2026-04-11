@@ -1,6 +1,7 @@
 import { Navigate, Route, Routes } from "react-router-dom";
 import { AboutPage } from "@/pages/about";
 import { AccountPage } from "@/pages/account";
+import { AccountBookingDetailPage } from "@/pages/account/booking-detail";
 import { BookingPage } from "@/pages/booking";
 import { CheckoutPage } from "@/pages/checkout";
 import { HomePage } from "@/pages/home";
@@ -10,6 +11,7 @@ import { PostsPage } from "@/pages/posts";
 import { ServiceDetailPage } from "@/pages/service-detail";
 import { ServicesPage } from "@/pages/services";
 import { TrackingPage } from "@/pages/tracking";
+import { VerifyEmailPage } from "@/pages/verify-email";
 
 export const AppRouter = () => (
   <Routes>
@@ -17,7 +19,9 @@ export const AppRouter = () => (
     <Route path="/about" element={<AboutPage />} />
     <Route path="/login" element={<LoginPage />} />
     <Route path="/register" element={<LoginPage />} />
+    <Route path="/verify-email" element={<VerifyEmailPage />} />
     <Route path="/account" element={<AccountPage />} />
+    <Route path="/account/bookings/:code" element={<AccountBookingDetailPage />} />
     <Route path="/posts" element={<PostsPage />} />
     <Route path="/posts/:slug" element={<PostDetailPage />} />
     <Route path="/services" element={<ServicesPage />} />

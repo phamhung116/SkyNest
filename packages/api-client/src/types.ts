@@ -82,6 +82,7 @@ export type Account = {
   role: string;
   preferred_language: string;
   is_active: boolean;
+  email_verified: boolean;
   created_at: string | null;
   updated_at: string | null;
 };
@@ -94,6 +95,22 @@ export type AuthSession = {
 export type AuthResult = {
   account: Account;
   session: AuthSession;
+};
+
+export type RegisterResult = {
+  account: Account;
+  email_verification_required: boolean;
+  message: string;
+};
+
+export type ResendVerificationResult = {
+  resent: boolean;
+  message: string;
+};
+
+export type EmailAuthStartResult = {
+  sent: boolean;
+  message: string;
 };
 
 export type Post = {
@@ -169,6 +186,13 @@ export type BookingCreatePayload = {
   payment_method: string;
 };
 
+export type BookingCancelPayload = {
+  reason: string;
+  refund_bank?: string;
+  refund_account_number?: string;
+  refund_account_name?: string;
+};
+
 export type RegisterPayload = {
   full_name: string;
   email: string;
@@ -180,6 +204,15 @@ export type RegisterPayload = {
 export type LoginPayload = {
   email: string;
   password: string;
+};
+
+export type EmailAuthStartPayload = {
+  email: string;
+};
+
+export type ChangePasswordPayload = {
+  current_password: string;
+  new_password: string;
 };
 
 export type UpdateProfilePayload = {

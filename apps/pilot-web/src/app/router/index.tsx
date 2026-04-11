@@ -1,5 +1,6 @@
 import { Navigate, Route, Routes } from "react-router-dom";
 import { usePilotAuth } from "@/app/providers/auth-provider";
+import { PilotAccountPage } from "@/pages/account";
 import { FlightsPage } from "@/pages/flights";
 import { LoginPage } from "@/pages/login";
 import { PostDetailPage } from "@/pages/post-detail";
@@ -24,6 +25,14 @@ export const AppRouter = () => (
       element={
         <ProtectedRoute>
           <FlightsPage />
+        </ProtectedRoute>
+      }
+    />
+    <Route
+      path={routes.account}
+      element={
+        <ProtectedRoute>
+          <PilotAccountPage />
         </ProtectedRoute>
       }
     />

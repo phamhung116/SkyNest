@@ -2,8 +2,8 @@ import type { PropsWithChildren } from "react";
 import { useEffect, useMemo, useRef, useState } from "react";
 import { Link, NavLink, useLocation } from "react-router-dom";
 import { Button, Container } from "@paragliding/ui";
-import { useAuth } from "@/app/providers/auth-provider";
-import { useI18n } from "@/app/providers/i18n-provider";
+import { useAuth } from "@/shared/providers/auth-provider";
+import { useI18n } from "@/shared/providers/i18n-provider";
 import { businessInfo } from "@/shared/constants/business";
 import { routes } from "@/shared/config/routes";
 

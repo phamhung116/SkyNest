@@ -1,11 +1,11 @@
 import { useMutation } from "@tanstack/react-query";
 import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
-import { Link, Navigate, useLocation, useNavigate } from "react-router-dom";
+import { Link, Navigate, useLocation } from "react-router-dom";
 import { Button, Card, Field, Input, Panel } from "@paragliding/ui";
-import type { LoginPayload, RegisterPayload } from "@paragliding/api-client";
-import { useAuth } from "@/app/providers/auth-provider";
-import { useI18n } from "@/app/providers/i18n-provider";
+import type { EmailAuthStartPayload, RegisterPayload } from "@paragliding/api-client";
+import { useAuth } from "@/shared/providers/auth-provider";
+import { useI18n } from "@/shared/providers/i18n-provider";
 import { routes } from "@/shared/config/routes";
 
 type Mode = "login" | "register";
@@ -36,19 +36,19 @@ const buildAuthHref = (mode: Mode, redirectTo: string) =>
   `${mode === "login" ? routes.login : routes.register}?redirect=${encodeURIComponent(redirectTo)}`;
 
 export const LoginPage = () => {
-  const navigate = useNavigate();
   const location = useLocation();
   const { locale, setLocale } = useI18n();
-  const { login, register, isAuthenticated } = useAuth();
+  const { startEmailAuth, register, resendVerificationEmail, isAuthenticated } = useAuth();
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+  const [verificationSentEmail, setVerificationSentEmail] = useState("");
+  const [resendNotice, setResendNotice] = useState<{ message: string; tone: "success" | "error" } | null>(null);
   const mode: Mode = location.pathname === routes.register ? "register" : "login";
   const redirectTo = new URLSearchParams(location.search).get("redirect") ?? routes.home;
 
-  const loginForm = useForm<LoginPayload>({
+  const loginForm = useForm<EmailAuthStartPayload>({
     defaultValues: {
-      email: "",
-      password: ""
+      email: ""
     },
     mode: "all",
     reValidateMode: "onChange"
@@ -73,12 +73,10 @@ export const LoginPage = () => {
   }, [locale, registerForm]);
 
   const loginMutation = useMutation({
-    mutationFn: (payload: LoginPayload) =>
-      login({
-        ...payload,
+    mutationFn: (payload: EmailAuthStartPayload) =>
+      startEmailAuth({
         email: normalizeEmail(payload.email)
-      }),
-    onSuccess: () => navigate(redirectTo, { replace: true })
+      })
   });
 
   const registerMutation = useMutation({
@@ -90,13 +88,35 @@ export const LoginPage = () => {
         phone: normalizePhone(payload.phone),
         preferred_language: locale
       }),
-    onSuccess: () => navigate(redirectTo, { replace: true })
+    onSuccess: (result) => {
+      setVerificationSentEmail(result.account.email);
+      registerForm.reset({
+        full_name: "",
+        email: "",
+        phone: "",
+        password: "",
+        confirm_password: "",
+        preferred_language: locale,
+        agree_terms: false
+      });
+    }
+  });
+
+  const resendMutation = useMutation({
+    mutationFn: (email: string) => resendVerificationEmail(normalizeEmail(email)),
+    onSuccess: (result) => {
+      setResendNotice({
+        message: result.message || "Da gui lai link xac thuc neu email nay can xac thuc.",
+        tone: "success"
+      });
+    }
   });
 
   useEffect(() => {
     loginMutation.reset();
     registerMutation.reset();
-    loginForm.reset({ email: "", password: "" });
+    resendMutation.reset();
+    loginForm.reset({ email: "" });
     registerForm.reset({
       full_name: "",
       email: "",
@@ -108,6 +128,8 @@ export const LoginPage = () => {
     });
     setShowPassword(false);
     setShowConfirmPassword(false);
+    setVerificationSentEmail("");
+    setResendNotice(null);
   }, [locale, loginForm, mode, registerForm]);
 
   if (isAuthenticated) {
@@ -116,6 +138,19 @@ export const LoginPage = () => {
 
   const loginError = loginMutation.error instanceof Error ? loginMutation.error.message : null;
   const registerError = registerMutation.error instanceof Error ? registerMutation.error.message : null;
+  const resendError = resendMutation.error instanceof Error ? resendMutation.error.message : null;
+  const loginSuccess = loginMutation.isSuccess;
+
+  const handleResendVerification = (email: string) => {
+    const normalizedEmail = normalizeEmail(email);
+    setResendNotice(null);
+    resendMutation.reset();
+    if (!emailPattern.test(normalizedEmail)) {
+      setResendNotice({ message: "Nhap email hop le de gui lai link xac thuc.", tone: "error" });
+      return;
+    }
+    resendMutation.mutate(normalizedEmail);
+  };
 
   return (
     <div className="auth-screen">
@@ -193,39 +228,57 @@ export const LoginPage = () => {
                   <p className="form-error">{loginForm.formState.errors.email.message}</p>
                 ) : null}
 
-                <Field label="Mat khau">
-                  <div className="auth-luxe-password">
-                    <Input
-                      type={showPassword ? "text" : "password"}
-                      autoComplete="current-password"
-                      placeholder="Nhap mat khau"
-                      {...loginForm.register("password", {
-                        required: "Mat khau la bat buoc."
-                      })}
-                    />
-                    <button
-                      type="button"
-                      className="auth-luxe-password__toggle"
-                      onClick={() => setShowPassword((current) => !current)}
-                    >
-                      {showPassword ? "An" : "Hien"}
-                    </button>
-                  </div>
-                </Field>
-                {loginForm.formState.errors.password ? (
-                  <p className="form-error">{loginForm.formState.errors.password.message}</p>
-                ) : null}
-
                 {loginError ? <div className="auth-minimal-alert">{loginError}</div> : null}
+                {loginSuccess ? (
+                  <div className="auth-minimal-alert is-success">
+                    Neu email hop le, link xac thuc dang nhap da duoc gui. Hay mo email va bam xac thuc de vao tai khoan.
+                  </div>
+                ) : null}
+                {resendNotice ? (
+                  <div className={`auth-minimal-alert ${resendNotice.tone === "success" ? "is-success" : ""}`}>
+                    {resendNotice.message}
+                  </div>
+                ) : null}
+                {resendError ? <div className="auth-minimal-alert">{resendError}</div> : null}
 
                 <Button className="auth-luxe-submit" disabled={loginMutation.isPending}>
-                  {loginMutation.isPending ? "Dang dang nhap..." : "Dang nhap"}
+                  {loginMutation.isPending ? "Dang gui link..." : "Gui link xac thuc"}
                 </Button>
 
                 <div className="auth-luxe-meta">
                   <Link to={buildAuthHref("register", redirectTo)}>Dang ky</Link>
                 </div>
               </form>
+            ) : verificationSentEmail ? (
+              <div className="auth-email-sent">
+                <span className="auth-email-sent__icon">OK</span>
+                <h2>Kiem tra email cua ban</h2>
+                <p>
+                  Link xac thuc da duoc gui den <strong>{verificationSentEmail}</strong>. Hay mo email va bam
+                  nut xac thuc de kich hoat tai khoan truoc khi dang nhap.
+                </p>
+                <p className="auth-email-sent__note">
+                  Neu dang chay local voi console email backend, link se hien trong terminal backend.
+                </p>
+                {resendNotice ? (
+                  <div className={`auth-minimal-alert ${resendNotice.tone === "success" ? "is-success" : ""}`}>
+                    {resendNotice.message}
+                  </div>
+                ) : null}
+                {resendError ? <div className="auth-minimal-alert">{resendError}</div> : null}
+                <Button
+                  type="button"
+                  variant="secondary"
+                  className="auth-email-sent__resend"
+                  disabled={resendMutation.isPending}
+                  onClick={() => handleResendVerification(verificationSentEmail)}
+                >
+                  {resendMutation.isPending ? "Dang gui..." : "Gui lai email"}
+                </Button>
+                <Link to={buildAuthHref("login", redirectTo)}>
+                  <Button className="auth-luxe-submit">Quay lai dang nhap</Button>
+                </Link>
+              </div>
             ) : (
               <form
                 className="auth-luxe-form"
