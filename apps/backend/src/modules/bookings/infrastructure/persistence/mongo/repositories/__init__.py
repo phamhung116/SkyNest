@@ -5,6 +5,7 @@ from collections import defaultdict
 from modules.bookings.application.dto import BookingPayload
 from modules.bookings.domain.entities import Booking
 from modules.bookings.domain.value_objects import (
+    BOOKING_APPROVAL_CANCELLED,
     BOOKING_APPROVAL_CONFIRMED,
     BOOKING_APPROVAL_PENDING,
     BOOKING_APPROVAL_REJECTED,
@@ -28,9 +29,14 @@ def _to_domain(document: BookingDocument) -> Booking:
         adults=document.adults,
         children=document.children,
         notes=document.notes,
+        pickup_option=getattr(document, "pickup_option", "self"),
+        pickup_address=getattr(document, "pickup_address", None),
+        pickup_fee=getattr(document, "pickup_fee", 0),
         unit_price=document.unit_price,
         original_total=document.original_total,
         final_total=document.final_total,
+        deposit_amount=getattr(document, "deposit_amount", 0),
+        deposit_percentage=getattr(document, "deposit_percentage", 40),
         payment_method=document.payment_method,
         payment_status=document.payment_status,
         approval_status=document.approval_status,
@@ -58,9 +64,14 @@ class MongoBookingRepository:
             adults=payload.adults,
             children=payload.children,
             notes=payload.notes,
+            pickup_option=payload.pickup_option,
+            pickup_address=payload.pickup_address,
+            pickup_fee=payload.pickup_fee,
             unit_price=payload.unit_price,
             original_total=payload.original_total,
             final_total=payload.final_total,
+            deposit_amount=payload.deposit_amount,
+            deposit_percentage=payload.deposit_percentage,
             payment_method=payload.payment_method,
             payment_status=payload.payment_status,
             approval_status=payload.approval_status,
@@ -80,6 +91,15 @@ class MongoBookingRepository:
 
     def list_by_email(self, email: str) -> list[Booking]:
         return [_to_domain(document) for document in BookingDocument.objects.filter(email=email)]
+
+    def list_all(self) -> list[Booking]:
+        return [_to_domain(document) for document in BookingDocument.objects.all().order_by("-created_at")]
+
+    def list_cancelled(self) -> list[Booking]:
+        return [
+            _to_domain(document)
+            for document in BookingDocument.objects.filter(approval_status__in=[BOOKING_APPROVAL_CANCELLED, BOOKING_APPROVAL_REJECTED])
+        ]
 
     def list_pending_review(self) -> list[Booking]:
         return [
@@ -110,6 +130,7 @@ class MongoBookingRepository:
                 flight_time=flight_time,
             )
             .exclude(approval_status=BOOKING_APPROVAL_REJECTED)
+            .exclude(approval_status=BOOKING_APPROVAL_CANCELLED)
             .count()
         )
 
@@ -122,6 +143,7 @@ class MongoBookingRepository:
                 flight_date__month=month,
             )
             .exclude(approval_status=BOOKING_APPROVAL_REJECTED)
+            .exclude(approval_status=BOOKING_APPROVAL_CANCELLED)
         )
         for document in queryset:
             date_key = document.flight_date.isoformat()
@@ -150,6 +172,11 @@ class MongoBookingRepository:
             "rejection_reason",
             "flight_status",
             "notes",
+            "pickup_option",
+            "pickup_address",
+            "pickup_fee",
+            "deposit_amount",
+            "deposit_percentage",
             "assigned_pilot_name",
             "assigned_pilot_phone",
         ]:

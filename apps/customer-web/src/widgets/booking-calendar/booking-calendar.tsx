@@ -1,6 +1,12 @@
 import { Fragment, type CSSProperties, useEffect, useMemo, useState } from "react";
 import type { AvailabilityDay, AvailabilitySlot } from "@paragliding/api-client";
 import { Badge, Button, Card, Panel } from "@paragliding/ui";
+import {
+  formatTemperature,
+  getFlightBadgeTone,
+  getWeatherKind,
+  WeatherSymbol
+} from "@/shared/ui/weather-visual";
 
 type SelectedSlot = {
   date: string;
@@ -220,6 +226,8 @@ export const BookingCalendar = ({
     : null;
   const fallbackDay = activeWeek.find((day) => day.day)?.day ?? sortedDays[0] ?? null;
   const weatherSource: AvailabilitySlot | AvailabilityDay | null = previewSlot ?? selectedWeatherSlot ?? fallbackDay;
+  const hasRealWeather = Boolean(weatherSource?.weather_available);
+  const weatherKind = weatherSource && hasRealWeather ? getWeatherKind(weatherSource) : "clear";
   const previewDate = hoveredCell?.date ?? selectedSlot?.date ?? fallbackDay?.date ?? null;
   const previewTime = previewSlot ? hoveredCell?.time ?? null : selectedWeatherSlot ? selectedSlot?.time ?? null : null;
   const weekRangeLabel = formatWeekRange(activeWeek);
@@ -431,7 +439,7 @@ export const BookingCalendar = ({
             </span>
           </div>
 
-          <section className="calendar-weather-inline">
+          <section className="calendar-weather-inline ios-calendar-weather">
             <div className="calendar-weather-inline__top">
               <div className="stack-sm">
                 <Badge tone="success">Weather theo gio</Badge>
@@ -448,34 +456,53 @@ export const BookingCalendar = ({
               </div>
             </div>
 
-            {weatherSource ? (
-              <div className="calendar-weather-inline__body">
-                <div className="calendar-weather-hero">
-                  <strong>{weatherSource.temperature_c} deg C</strong>
-                  <span>{weatherSource.flight_condition}</span>
-                </div>
+            {weatherSource && hasRealWeather ? (
+              <div className={`ios-weather-card ios-weather-card--compact ios-weather-card--${weatherKind}`}>
+                <div className="ios-weather-card__panel">
+                  <div className="ios-weather-card__top">
+                    <div>
+                      <span className="ios-weather-card__eyebrow">Da Nang, Viet Nam</span>
+                      <h3>{weatherSource.weather_condition}</h3>
+                      <p>{previewTime ? `Khung gio ${previewTime}` : "Du bao trong ngay"}</p>
+                    </div>
+                    <WeatherSymbol kind={weatherKind} />
+                  </div>
 
-                <div className="weather-metrics calendar-weather-inline__metrics">
-                  <article>
-                    <span>Nhiet do</span>
-                    <strong>{weatherSource.temperature_c} deg C</strong>
-                  </article>
-                  <article>
-                    <span>Gio</span>
-                    <strong>{weatherSource.wind_kph} km/h</strong>
-                  </article>
-                  <article>
-                    <span>UV</span>
-                    <strong>{weatherSource.uv_index}</strong>
-                  </article>
-                  <article>
-                    <span>Dieu kien</span>
-                    <strong>{weatherSource.flight_condition}</strong>
-                  </article>
+                  <div className="ios-weather-card__current">
+                    <div>
+                      <strong>{formatTemperature(weatherSource.temperature_c)}</strong>
+                      <span>{weatherSource.weather_condition}</span>
+                    </div>
+                    <div className="ios-weather-card__flight">
+                      <small>Dieu kien bay</small>
+                      <Badge tone={getFlightBadgeTone(weatherSource.flight_condition)}>
+                        {weatherSource.flight_condition}
+                      </Badge>
+                    </div>
+                  </div>
+
+                  <div className="ios-weather-metrics ios-weather-metrics--compact">
+                    <article>
+                      <span>Nhiet do</span>
+                      <strong>{formatTemperature(weatherSource.temperature_c, true)}</strong>
+                    </article>
+                    <article>
+                      <span>Gio</span>
+                      <strong>{weatherSource.wind_kph} km/h</strong>
+                    </article>
+                    <article>
+                      <span>UV</span>
+                      <strong>{weatherSource.uv_index}</strong>
+                    </article>
+                    <article>
+                      <span>Tam nhin</span>
+                      <strong>{weatherSource.visibility_km} km</strong>
+                    </article>
+                  </div>
                 </div>
               </div>
             ) : (
-              <p className="calendar-selection-note">Chua co du lieu weather cho lich bay nay.</p>
+              <p className="calendar-selection-note">Chua co du lieu thoi tiet thuc te tu API cho lich bay nay.</p>
             )}
           </section>
         </Panel>

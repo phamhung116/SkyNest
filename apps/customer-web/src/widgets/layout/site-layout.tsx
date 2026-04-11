@@ -2,8 +2,8 @@ import type { PropsWithChildren } from "react";
 import { useEffect, useMemo, useRef, useState } from "react";
 import { Link, NavLink, useLocation } from "react-router-dom";
 import { Button, Container } from "@paragliding/ui";
-import { useAuth } from "@/app/providers/auth-provider";
-import { useI18n } from "@/app/providers/i18n-provider";
+import { useAuth } from "@/shared/providers/auth-provider";
+import { useI18n } from "@/shared/providers/i18n-provider";
 import { businessInfo } from "@/shared/constants/business";
 import { routes } from "@/shared/config/routes";
 
@@ -24,8 +24,10 @@ export const SiteLayout = ({ children, hideHeader = false, hideFooter = false }:
     { to: routes.home, label: t("nav_home") },
     { to: routes.services, label: t("nav_services") },
     { to: routes.posts, label: t("nav_posts") },
+    { to: routes.gallery, label: t("nav_gallery") },
     { to: routes.tracking, label: t("nav_tracking") },
-    { to: routes.about, label: t("nav_about") }
+    { to: routes.about, label: t("nav_about") },
+    { to: routes.contact, label: t("nav_contact") }
   ];
 
   useEffect(() => {
@@ -254,6 +256,7 @@ export const SiteLayout = ({ children, hideHeader = false, hideFooter = false }:
               <p>{businessInfo.phone}</p>
               <p>{businessInfo.email}</p>
               <p>{businessInfo.address}</p>
+              <Link to={routes.contact}>Xem ban do lien he</Link>
             </div>
           </Container>
         </footer>

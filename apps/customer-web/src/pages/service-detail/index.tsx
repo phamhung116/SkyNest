@@ -235,18 +235,22 @@ export const ServiceDetailPage = () => {
                 <div className="detail-booking-selection">
                   <span>Khung gio da chon</span>
                   <strong>{formatSelectedSlotLabel(selectedSlot)}</strong>
-                  <small>Chon mot o con trong tren lich de tiep tuc dat lich.</small>
+                  <small>
+                    {selectedSlot
+                      ? "Khung gio nay se duoc mang sang trang dien thong tin."
+                      : "Co the dat lich ngay va chon khung gio o buoc tiep theo."}
+                  </small>
                 </div>
 
-                {selectedSlot ? (
-                  <Link
-                    to={`/booking?service=${servicePackage.slug}&date=${selectedSlot.date}&time=${selectedSlot.time}`}
-                  >
-                    <Button>Tiep tuc dat lich</Button>
-                  </Link>
-                ) : (
-                  <p className="calendar-selection-note">Lich dat se duoc giu sau khi ban chon mot slot hop le.</p>
-                )}
+                <Link
+                  to={
+                    selectedSlot
+                      ? `/booking?service=${servicePackage.slug}&date=${selectedSlot.date}&time=${selectedSlot.time}`
+                      : `/booking?service=${servicePackage.slug}`
+                  }
+                >
+                  <Button>{selectedSlot ? "Tiep tuc dat lich" : "Dat lich ngay"}</Button>
+                </Link>
               </Panel>
             </Card>
           </aside>

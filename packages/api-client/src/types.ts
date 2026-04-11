@@ -32,7 +32,10 @@ export type AvailabilitySlot = {
   temperature_c: number;
   wind_kph: number;
   uv_index: number;
+  visibility_km: number;
+  weather_condition: string;
   flight_condition: string;
+  weather_available: boolean;
 };
 
 export type AvailabilityDay = {
@@ -42,7 +45,10 @@ export type AvailabilityDay = {
   temperature_c: number;
   wind_kph: number;
   uv_index: number;
+  visibility_km: number;
+  weather_condition: string;
   flight_condition: string;
+  weather_available: boolean;
   slots: AvailabilitySlot[];
 };
 
@@ -60,9 +66,14 @@ export type Booking = {
   adults: number;
   children: number;
   notes: string | null;
+  pickup_option: string;
+  pickup_address: string | null;
+  pickup_fee: string;
   unit_price: string;
   original_total: string;
   final_total: string;
+  deposit_amount: string;
+  deposit_percentage: number;
   payment_method: string;
   payment_status: string;
   approval_status: string;
@@ -82,6 +93,7 @@ export type Account = {
   role: string;
   preferred_language: string;
   is_active: boolean;
+  email_verified: boolean;
   created_at: string | null;
   updated_at: string | null;
 };
@@ -95,6 +107,25 @@ export type AuthResult = {
   account: Account;
   session: AuthSession;
 };
+
+export type ResendVerificationResult = {
+  resent: boolean;
+  message: string;
+};
+
+export type EmailAuthStartResult = {
+  sent: boolean;
+  poll_token?: string | null;
+  message: string;
+};
+
+export type EmailAuthClaimResult =
+  | {
+      ready: false;
+    }
+  | ({
+      ready: true;
+    } & AuthResult);
 
 export type Post = {
   id: string;
@@ -167,19 +198,29 @@ export type BookingCreatePayload = {
   children: number;
   notes?: string;
   payment_method: string;
+  pickup_option?: string;
+  pickup_address?: string;
 };
 
-export type RegisterPayload = {
-  full_name: string;
-  email: string;
-  phone: string;
-  password: string;
-  preferred_language: string;
+export type BookingCancelPayload = {
+  reason: string;
+  refund_bank?: string;
+  refund_account_number?: string;
+  refund_account_name?: string;
 };
 
 export type LoginPayload = {
   email: string;
   password: string;
+};
+
+export type EmailAuthStartPayload = {
+  email: string;
+};
+
+export type ChangePasswordPayload = {
+  current_password: string;
+  new_password: string;
 };
 
 export type UpdateProfilePayload = {

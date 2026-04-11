@@ -1,5 +1,7 @@
 export const flightStatusLabels: Record<string, string> = {
+  WAITING_CONFIRMATION: "Cho xac nhan",
   WAITING: "Dang cho",
+  PICKING_UP: "Dang di chuyen den diem don",
   EN_ROUTE: "Dang di chuyen den diem bay",
   FLYING: "Dang bay",
   LANDED: "Da ha canh"
@@ -8,11 +10,12 @@ export const flightStatusLabels: Record<string, string> = {
 export const approvalStatusLabels: Record<string, string> = {
   PENDING: "Cho duyet",
   CONFIRMED: "Da xac nhan",
-  REJECTED: "Da tu choi"
+  REJECTED: "Da huy",
+  CANCELLED: "Da huy"
 };
 
 export const paymentStatusLabels: Record<string, string> = {
-  AWAITING_CASH: "Thanh toan tai diem bay",
+  AWAITING_CASH: "Cho thanh toan",
   PENDING: "Cho thanh toan online",
   PAID: "Da thanh toan",
   FAILED: "Thanh toan that bai",
