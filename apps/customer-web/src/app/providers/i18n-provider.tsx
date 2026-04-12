@@ -16,11 +16,11 @@ const dictionaries = {
     nav_logout: "Đăng xuất",
     quick_book: "Đặt ngay",
     call_now: "Goi ngay",
-    hero_kicker: "Trai nghiem dinh cao tai Da Nang",
-    hero_title_line_1: "Bay luon giua",
-    hero_title_line_2: "may troi Son Tra",
-    hero_services: "Xem goi dich vu",
-    hero_tracking: "Tra cuu booking"
+    hero_kicker: "Trải nghiệm đỉnh cao tại Đà Nẵng",
+    hero_title_line_1: "BAY LƯỢN GIỮA",
+    hero_title_line_2: "MÂY TRỜI",
+    hero_services: "Đặt lịch ngay",
+    hero_about: "Tìm hiểu thêm"
   },
   en: {
     nav_home: "Home",
@@ -37,8 +37,8 @@ const dictionaries = {
     hero_kicker: "Premier paragliding in Da Nang",
     hero_title_line_1: "Fly above",
     hero_title_line_2: "the Son Tra skyline",
-    hero_services: "View packages",
-    hero_tracking: "Track booking"
+    hero_services: "Book now",
+    hero_about: "About us"
   }
 } as const;
 

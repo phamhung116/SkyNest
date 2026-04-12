@@ -1,5 +1,5 @@
 @import url("https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap");
-@import "tailwindcss";
+@import "tailwindcss" important;
 
 @theme {
   --color-brand: #800000; /* Deep Maroon from PDF */
@@ -55,6 +55,41 @@
 .btn-secondary {
   @apply border-2 border-brand text-brand px-6 py-3 rounded-full font-semibold transition-all hover:bg-brand hover:text-white active:scale-95;
 }
+
+.ui-button.btn-primary {
+  background: var(--color-brand) !important;
+  border-color: transparent !important;
+  box-shadow: none !important;
+  color: var(--color-white) !important;
+}
+
+.ui-button.btn-primary:hover {
+  background: var(--color-brand-light) !important;
+}
+
+.ui-button.btn-secondary {
+  background: transparent !important;
+  box-shadow: none !important;
+}
+
+.ui-button.btn-secondary:hover {
+  background: var(--color-brand) !important;
+  color: var(--color-white) !important;
+}
+
+.nav-header .nav-header-item {
+  color: var(--color-stone-600);
+  font-size: 0.875rem;
+  line-height: calc(1.25/0.875);
+  font-weight: 500;
+  transition: color 160ms ease;
+}
+
+.nav-header .nav-header-item:hover,
+.nav-header .nav-header-item.is-active {
+  color: var(--color-brand);
+}
+/* PHng */
 
 
 .site-shell {
@@ -4873,18 +4908,4 @@
   .calendar-week-board-wrap {
     overflow-x: auto;
   }
-}
-
-/* PHNG */
-.nav-header .nav-header-item {
-  color: var(--color-stone-600);
-  font-size: 0.875rem;
-  line-height: calc(1.25/0.875);
-  font-weight: 500;
-  transition: color 160ms ease;
-}
-
-.nav-header .nav-header-item:hover,
-.nav-header .nav-header-item.is-active {
-  color: var(--color-brand);
 }

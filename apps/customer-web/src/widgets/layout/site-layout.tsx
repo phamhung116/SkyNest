@@ -1,6 +1,5 @@
 import type { PropsWithChildren } from "react";
 import { useEffect, useMemo, useRef, useState } from "react";
-import { motion, AnimatePresence } from 'motion/react';
 import { Link, NavLink, useLocation } from "react-router-dom";
 import { Button, Container } from "@paragliding/ui";
 import { useAuth } from "@/app/providers/auth-provider";
