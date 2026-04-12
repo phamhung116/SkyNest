@@ -8,12 +8,32 @@ import { useI18n } from "@/app/providers/i18n-provider";
 import { businessInfo } from "@/shared/constants/business";
 import { routes } from "@/shared/config/routes";
 
+import { 
+  Wind, 
+  UserRound,
+  Calendar, 
+  MapPin, 
+  Phone, 
+  Mail, 
+  ChevronRight, 
+  ChevronDown,
+  Menu, 
+  X, 
+  ShieldCheck, 
+  Camera, 
+  Clock,
+  Navigation,
+  CheckCircle2,
+  AlertCircle,
+  Sun,
+  Eye,
+  User
+} from 'lucide-react';
+
 type SiteLayoutProps = PropsWithChildren<{
   hideHeader?: boolean;
   hideFooter?: boolean;
 }>;
-
-
 
 export const SiteLayout = ({ children, hideHeader = false, hideFooter = false }: SiteLayoutProps) => {
   const { account, isAuthenticated, logout } = useAuth();
@@ -85,37 +105,39 @@ export const SiteLayout = ({ children, hideHeader = false, hideFooter = false }:
                 </button>
 
                 <Link className="site-brand" to={routes.home}>
-                  <span className="site-brand__icon">SN</span>
-                  <span className="site-brand__copy">
-                    <strong>{businessInfo.shortName}</strong>
-                    <small>Da Nang Paragliding</small>
-                  </span>
+                  <div className="w-10 h-10 bg-brand rounded-lg flex items-center justify-center text-white">
+                    <Wind size={24} />
+                  </div>
+                  <div>
+                    <h1 className="text-xl font-bold tracking-tight text-brand">DA NANG</h1>
+                    <p className="text-[10px] font-bold tracking-[0.2em] text-stone-500 uppercase -mt-1">Paragliding</p>
+                  </div>
                 </Link>
 
-                <nav className="site-nav site-nav--desktop">
+                <nav className="hidden md:flex items-center gap-6 ml-auto">
                   {navItems.map((item) => (
-                    <NavLink key={item.to} to={item.to} className="site-nav__link">
+                    <NavLink key={item.to} to={item.to} className={`text-sm font-medium transition-colors ? 'text-brand' : 'text-stone-600 hover:text-brand'}`}>
                       {item.label}
                     </NavLink>
                   ))}
                 </nav>
               </div>
 
-              <div className="site-tools">
+              <div className="flex items-center gap-2 ml-4 border-l border-stone-200 pl-4">
                 <div className="locale-switcher">
                   <button
                     type="button"
-                    className={locale === "vi" ? "is-active" : ""}
+                    className={`transition-opacity ${locale === 'vi' ? 'opacity-100': 'opacity-40 hover:opacity-100'}`}
                     onClick={() => setLocale("vi")}
                   >
-                    VI
+                    <img src="https://flagcdn.com/w40/vn.png" alt="VN" className="w-6 h-4 object-cover rounded-sm shadow-sm" />
                   </button>
                   <button
                     type="button"
-                    className={locale === "en" ? "is-active" : ""}
+                    className={`transition-opacity ${locale === 'en' ? 'opacity-100': 'opacity-40 hover:opacity-100'}`}
                     onClick={() => setLocale("en")}
                   >
-                    EN
+                    <img src="https://flagcdn.com/w40/gb.png" alt="UK" className="w-6 h-4 object-cover rounded-sm shadow-sm" />
                   </button>
                 </div>
 
@@ -152,15 +174,9 @@ export const SiteLayout = ({ children, hideHeader = false, hideFooter = false }:
                   </div>
                 ) : (
                   <Link to={routes.login}>
-                    <Button variant="secondary">{t("nav_login")}</Button>
+                    <UserRound color="#57534d"></UserRound>
                   </Link>
                 )}
-
-                <div className="site-cta">
-                  <Link to={routes.services}>
-                    <Button>{t("quick_book")}</Button>
-                  </Link>
-                </div>
               </div>
             </Container>
           </header>
