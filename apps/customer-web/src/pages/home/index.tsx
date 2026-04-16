@@ -4,7 +4,6 @@ import React from "react";
 import { Badge, Button, Card, Container, Panel } from "@paragliding/ui";
 import { customerApi } from "@/shared/config/api";
 import { businessInfo } from "@/shared/constants/business";
-import { customerExperienceSteps, customerFaqs } from "@/shared/constants/customer-content";
 import { SiteLayout } from "@/widgets/layout/site-layout";
 import { HomeHero } from "@/widgets/hero/home-hero";
 import { ServiceCard } from "@/widgets/service-card/service-card";
@@ -20,35 +19,10 @@ import {
   ChevronRight
 } from 'lucide-react';
 
-const valueProps = [
-  {
-    title: "Lich dat de theo doi",
-    description: "Khach xem tung khung gio trong, weather theo gio va chon lich ngay tren mot bo cuc ro rang."
-  },
-  {
-    title: "Thong tin gia minh bach",
-    description: "Moi goi bay hien ro gia, thoi luong, diem cat canh va dieu kien tham gia truoc khi dat."
-  },
-  {
-    title: "Theo doi sau dat lich",
-    description: "Chi can email hoac so dien thoai de xem lai booking, timeline va vi tri GPS."
-  },
-  {
-    title: "Dat lich va thanh toan gon",
-    description: "Luot dat lich, dat coc QR va theo doi booking duoc gom lai thanh mot flow de hieu."
-  }
-];
-
-const experienceGallery = [
-  "https://images.unsplash.com/photo-1544620347-c4fd4a3d5957?auto=format&fit=crop&w=1200&q=80",
-  "https://images.unsplash.com/photo-1500530855697-b586d89ba3ee?auto=format&fit=crop&w=1200&q=80",
-  "https://images.unsplash.com/photo-1511497584788-876760111969?auto=format&fit=crop&w=1200&q=80"
-];
-
 export const HomePage = () => {
   const { data: services = [] } = useQuery({
     queryKey: ["featured-services"],
-    queryFn: () => customerApi.listServices(true)
+    queryFn: () => customerApi.listServices()
   });
   const { data: posts = [] } = useQuery({
     queryKey: ["home-posts"],

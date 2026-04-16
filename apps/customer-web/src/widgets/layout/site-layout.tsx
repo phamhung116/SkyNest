@@ -6,6 +6,7 @@ import { useAuth } from "@/shared/providers/auth-provider";
 import { useI18n } from "@/shared/providers/i18n-provider";
 import { businessInfo } from "@/shared/constants/business";
 import { routes } from "@/shared/config/routes";
+import { motion } from 'motion/react';
 
 import {
   FaFacebook,
@@ -21,8 +22,37 @@ import {
   X, 
 } from 'lucide-react';
 
-
-
+export const Banner = ({ title, subtitle, image }: { title: string, subtitle?: string, image: string }) => {
+  return (
+    <section className="relative h-[40vh] md:h-[50vh] flex items-center overflow-hidden mb-12 md:mb-20">
+      <div className="absolute inset-0 z-0">
+        <img 
+          src={image} 
+          alt={title} 
+          className="w-full h-full object-cover"
+          referrerPolicy="no-referrer"
+        />
+        <div className="absolute inset-0 bg-gradient-to-r from-black/80 to-black/20" />
+      </div>
+      <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 w-full text-white">
+        <motion.div
+          initial={{ x: -50, opacity: 0 }}
+          animate={{ x: 0, opacity: 1 }}
+          transition={{ duration: 0.8 }}
+        >
+          <h1 className="text-4xl md:text-7xl font-black mb-4 tracking-tighter uppercase">
+            {title}
+          </h1>
+          {subtitle && (
+            <p className="text-lg md:text-xl text-stone-300 max-w-2xl font-medium leading-relaxed">
+              {subtitle}
+            </p>
+          )}
+        </motion.div>
+      </div>
+    </section>
+  );
+}
 
 type SiteLayoutProps = PropsWithChildren<{
   hideHeader?: boolean;
@@ -294,17 +324,8 @@ export const SiteLayout = ({ children, hideHeader = false, hideFooter = false }:
                 </div>
               </div>
             </div>
-<<<<<<< HEAD
             <div className="border-t border-stone-800 mt-16 pt-8 text-center text-stone-500 text-xs">
               © 2024 Da Nang Paragliding. All rights reserved.
-=======
-            <div className="stack-sm">
-              <strong className="site-footer__title">Lien he</strong>
-              <p>{businessInfo.phone}</p>
-              <p>{businessInfo.email}</p>
-              <p>{businessInfo.address}</p>
-              <Link to={routes.contact}>Xem ban do lien he</Link>
->>>>>>> origin/main
             </div>
           </div>
         </footer>

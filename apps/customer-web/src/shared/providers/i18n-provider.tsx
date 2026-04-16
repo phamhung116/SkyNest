@@ -5,22 +5,22 @@ export type Locale = "vi" | "en";
 
 const dictionaries = {
   vi: {
-    nav_home: "Trang chu",
-    nav_services: "Dich vu",
-    nav_posts: "Bai viet",
-    nav_tracking: "Theo doi",
-    nav_about: "Gioi thieu",
-    nav_contact: "Lien he",
-    nav_account: "Tai khoan",
-    nav_login: "Dang nhap",
-    nav_logout: "Dang xuat",
-    quick_book: "Dat ngay",
+    nav_home: "Trang chủ",
+    nav_services: "Dịch vụ",
+    nav_posts: "Tin tức",
+    nav_tracking: "Theo dõi",
+    nav_about: "Giới thiệu",
+    nav_contact: "Liên hệ",
+    nav_account: "Tài khoản",
+    nav_login: "Đăng nhập",
+    nav_logout: "Đăng xuất",
+    quick_book: "Đặt ngay",
     call_now: "Goi ngay",
-    hero_kicker: "Trai nghiem dinh cao tai Da Nang",
-    hero_title_line_1: "Bay luon giua",
-    hero_title_line_2: "may troi Son Tra",
-    hero_services: "Xem goi dich vu",
-    hero_tracking: "Tra cuu booking"
+    hero_kicker: "Trải nghiệm đỉnh cao tại Đà Nẵng",
+    hero_title_line_1: "BAY LƯỢN GIỮA",
+    hero_title_line_2: "MÂY TRỜI",
+    hero_services: "Đặt lịch ngay",
+    hero_about: "Tìm hiểu thêm"
   },
   en: {
     nav_home: "Home",
@@ -37,8 +37,8 @@ const dictionaries = {
     hero_kicker: "Premier paragliding in Da Nang",
     hero_title_line_1: "Fly above",
     hero_title_line_2: "the Son Tra skyline",
-    hero_services: "View packages",
-    hero_tracking: "Track booking"
+    hero_services: "Book now",
+    hero_about: "About us"
   }
 } as const;
 

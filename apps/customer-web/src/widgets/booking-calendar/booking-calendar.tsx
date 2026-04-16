@@ -2,6 +2,11 @@ import { Fragment, type CSSProperties, useEffect, useMemo, useState } from "reac
 import type { AvailabilityDay, AvailabilitySlot } from "@paragliding/api-client";
 import { Badge, Button, Card, Panel } from "@paragliding/ui";
 
+import {
+  ChevronRight,
+  ChevronDown,
+} from "lucide-react"
+
 type SelectedSlot = {
   date: string;
   time: string;
@@ -254,97 +259,110 @@ export const BookingCalendar = ({
   };
 
   return (
-    <div className="calendar-shell">
-      <Card className="calendar-card">
-        <Panel className="calendar-panel">
-          <div className="calendar-toolbar">
-            <div className="calendar-toolbar__group">
-              <Button variant="ghost" className="calendar-nav-button" onClick={() => moveWeek(-1)}>
-                Prev week
-              </Button>
+    <div className="space-y-4 max-w-md mx-auto lg:max-w-none">
+      <div className="relative">
+        <div className="flex items-center justify-between mb-4">
+          <Button onClick={() => moveWeek(-1)} className="p-1 hover:bg-stone-100 rounded-full transition-colors">
+            <ChevronRight className="rotate-180 text-stone-400" size={20} />
+          </Button>
 
-              <div className="calendar-picker">
-                <button
-                  type="button"
-                  className="calendar-picker__button"
-                  onClick={() => {
-                    setShowMonthMenu((current) => !current);
-                    setShowYearMenu(false);
-                  }}
-                >
-                  {monthNames[month - 1]}
-                </button>
-                <button
-                  type="button"
-                  className="calendar-picker__button"
-                  onClick={() => {
-                    setShowYearMenu((current) => !current);
-                    setShowMonthMenu(false);
-                  }}
-                >
-                  {year}
-                </button>
-              </div>
-
-              <Button variant="ghost" className="calendar-nav-button" onClick={() => moveWeek(1)}>
-                Next week
-              </Button>
-            </div>
-
-            <Badge>Tuan {weekIndex + 1}</Badge>
+          <div className="flex gap-2">
+            <button
+              type="button"
+              className="text-sm font-bold text-stone-700 hover:text-brand transition-colors flex items-center gap-1"
+              onClick={() => {
+                setShowMonthMenu((current) => !current);
+                setShowYearMenu(false);
+              }}
+            >
+              {monthNames[month - 1]}
+              <ChevronDown size={14} />
+            </button>
+            <button
+              type="button"
+              className="text-sm font-bold text-stone-700 hover:text-brand transition-colors flex items-center gap-1"
+              onClick={() => {
+                setShowYearMenu((current) => !current);
+                setShowMonthMenu(false);
+              }}
+            >
+              {year}
+              <ChevronDown size={14} />
+            </button>
           </div>
 
-          {showMonthMenu ? (
-            <div className="calendar-menu calendar-menu--months">
-              {monthNames.map((label, index) => (
-                <button
-                  key={label}
-                  type="button"
-                  className={`calendar-menu__option ${month === index + 1 ? "is-active" : ""}`}
-                  onClick={() => changeMonth(year, index + 1)}
-                >
-                  {label}
-                </button>
-              ))}
+          <Button onClick={() => moveWeek(1)} className="p-1 hover:bg-stone-100 rounded-full transition-colors">
+            <ChevronRight className="text-stone-400" size={20} />
+          </Button>
+        </div>
+
+        {showMonthMenu ? (
+            <div className="absolute top-full left-0 right-0 z-20 bg-white border border-stone-200 rounded-2xl shadow-xl p-4 mt-1">
+              <div className="grid grid-cols-3 gap-2">
+                {monthNames.map((label, index) => (
+                  <button
+                    key={label}
+                    type="button"
+                    className={`text-[10px] py-1 rounded-lg transition-colors ${month === index + 1 ? "is-active bg-brand text-white" : "hover:bg-stone-100"}`}
+                    onClick={() => changeMonth(year, index + 1)}
+                  >
+                    {label}
+                  </button>
+                ))}
+              </div>
+              
             </div>
           ) : null}
 
           {showYearMenu ? (
-            <div className="calendar-menu calendar-menu--years">
-              {yearOptions.map((option) => (
-                <button
-                  key={option}
-                  type="button"
-                  className={`calendar-menu__option ${year === option ? "is-active" : ""}`}
-                  onClick={() => changeMonth(option, month)}
-                >
-                  {option}
-                </button>
-              ))}
+            <div className="absolute top-full left-0 right-0 z-20 bg-white border border-stone-200 rounded-2xl shadow-xl p-4 mt-1">
+              <div className="flex gap-2 justify-center">
+                {yearOptions.map((option) => (
+                  <button
+                    key={option}
+                    type="button"
+                    className={`text-[10px] px-4 py-1 rounded-lg transition-colors ${year === option ? "is-active bg-brand text-white" : "hover:bg-stone-100"}`}
+                    onClick={() => changeMonth(option, month)}
+                  >
+                    {option}
+                  </button>
+                ))}
+              </div>
             </div>
           ) : null}
-
+      </div>
+      <div className="overflow-x-auto">
+        <div className="min-w-[300px] max-w-2xl mx-auto">
           {activeWeek.length > 0 ? (
-            <>
-              <div className="calendar-week-summary">
-                <div>
-                  <Badge tone="success">Lich theo tuan</Badge>
-                  <h4>{weekRangeLabel}</h4>
-                </div>
-                {selectedSlot ? (
-                  <div className="calendar-week-summary__chip">
-                    {selectedSlot.time}, {fromDateKey(selectedSlot.date).toLocaleDateString("vi-VN")}
-                  </div>
-                ) : (
-                  <div className="calendar-week-summary__chip">Chon mot slot</div>
-                )}
-              </div>
-
+            <table className="w-full border-collapse table-fixed">
+              <thead>
+                <tr>
+                  {activeWeek.map((day) => {
+                    const availableCount = day.day ? getAvailableCount(day.day) : 0;
+                    const isSelectedDay = Boolean(selectedSlot?.date && selectedSlot.date === day.isoDate);
+                    return (
+                      <th
+                        key={day.key}
+                        className="p-1 text-center"
+                      >
+                        <div className="flex flex-col">
+                          <span className={`text-[8px] uppercase font-bold ${isSelectedDay ? 'text-brand' : 'text-stone-400'}`}>
+                            {weekdayShort[day.date.getDay()]}
+                          </span>
+                          <span className={`text-[10px] font-bold ${isSelectedDay ? 'text-brand' : 'text-stone-500'}`}>
+                            {day.date.getDate()}
+                          </span>
+                        </div>
+                      </th>
+                    );
+                  })}
+                </tr>
+              </thead>
+            <tbody>
+              
+            </tbody>
               <div className="calendar-week-board-wrap" onMouseLeave={() => setHoveredCell(selectedSlot)}>
                 <div className="calendar-week-board" style={weekBoardStyle}>
-                  <div className="calendar-week-board__corner">
-                    <span>Gio</span>
-                  </div>
 
                   {activeWeek.map((day) => {
                     const availableCount = day.day ? getAvailableCount(day.day) : 0;
@@ -412,7 +430,7 @@ export const BookingCalendar = ({
                   ))}
                 </div>
               </div>
-            </>
+            </table>
           ) : (
             <div className="calendar-empty">Chua co du lieu kha dung cho thang nay.</div>
           )}
@@ -483,8 +501,8 @@ export const BookingCalendar = ({
               <p className="calendar-selection-note">Chua co du lieu thoi tiet thuc te tu API cho lich bay nay.</p>
             )}
           </section>
-        </Panel>
-      </Card>
+        </div>
+      </div>
     </div>
   );
 };
