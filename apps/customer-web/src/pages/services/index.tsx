@@ -1,8 +1,6 @@
 import { useQuery } from "@tanstack/react-query";
-import { Badge, Card, Container, Panel } from "@paragliding/ui";
+import { Badge, Card, Panel } from "@paragliding/ui";
 import { customerApi } from "@/shared/config/api";
-import { businessInfo } from "@/shared/constants/business";
-import { servicePageNotes } from "@/shared/constants/customer-content";
 import { SiteLayout, Banner } from "@/widgets/layout/site-layout";
 import { ServiceCard } from "@/widgets/service-card/service-card";
 
