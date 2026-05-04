@@ -4,9 +4,9 @@ import type { ServiceFeature, ServicePackage } from "@paragliding/api-client";
 import { Button, Card, Panel } from "@paragliding/ui";
 import { formatCurrency } from "@/shared/lib/format";
 import {
-  localizeFeatureName,
-  localizeServiceName,
-  localizeServiceShortDescription
+  resolveFeatureNameSource,
+  resolveServiceNameSource,
+  resolveServiceShortDescriptionSource
 } from "@/shared/lib/localized-content";
 import { useTranslatedText } from "@/shared/lib/use-translated-text";
 import { useI18n } from "@/shared/providers/i18n-provider";
@@ -17,17 +17,18 @@ type ServiceCardProps = {
 
 const ServiceFeatureChip = ({ feature }: { feature: ServiceFeature }) => {
   const { locale } = useI18n();
-  const label = useTranslatedText(localizeFeatureName(feature, locale));
+  const labelSource = resolveFeatureNameSource(feature, locale);
+  const label = useTranslatedText(labelSource.text, { source: labelSource.source });
 
   return <span>{label}</span>;
 };
 
 const ServiceCardComponent = ({ item }: ServiceCardProps) => {
   const { locale, t } = useI18n();
-  const localizedName = localizeServiceName(item, locale);
-  const localizedShortDescription = localizeServiceShortDescription(item, locale);
-  const name = useTranslatedText(localizedName);
-  const shortDescription = useTranslatedText(localizedShortDescription);
+  const nameSource = resolveServiceNameSource(item, locale);
+  const shortDescriptionSource = resolveServiceShortDescriptionSource(item, locale);
+  const name = useTranslatedText(nameSource.text, { source: nameSource.source });
+  const shortDescription = useTranslatedText(shortDescriptionSource.text, { source: shortDescriptionSource.source });
 
   return (
     <Link to={`/services/${item.slug}`}>

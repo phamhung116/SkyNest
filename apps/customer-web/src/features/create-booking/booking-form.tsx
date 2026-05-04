@@ -1,17 +1,17 @@
 import { useMutation, useQuery } from "@tanstack/react-query";
-import { useEffect, useMemo, useState } from "react";
+import { Suspense, lazy, useEffect, useMemo, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useForm } from "react-hook-form";
 import type { BookingCreatePayload, PickupLocation } from "@paragliding/api-client";
-import { Button, Card, Field, Input, Panel, Textarea } from "@paragliding/ui";
+import { Button, Card, Dialog, Field, Input, Panel, Textarea } from "@paragliding/ui";
 import { customerApi } from "@/shared/config/api";
 import { formatCurrency } from "@/shared/lib/format";
+import { LocalizedTextSource, resolveFeatureNameSource, resolveServiceNameSource } from "@/shared/lib/localized-content";
 import { serviceQueryOptions } from "@/shared/lib/query-options";
 import { checkoutStorage, trackingLookupStorage } from "@/shared/lib/storage";
 import { useTranslatedText } from "@/shared/lib/use-translated-text";
 import { useAuth } from "@/shared/providers/auth-provider";
 import { useI18n } from "@/shared/providers/i18n-provider";
-import { PickupLocationMap } from "./pickup-location-map";
 
 type BookingFormProps = {
   serviceSlug: string;
@@ -27,15 +27,104 @@ const PICKUP_FEE = 50000;
 const DEPOSIT_PERCENT = 40;
 const PAYOS_PAYMENT_METHOD = "gateway";
 
+const PickupLocationMap = lazy(() =>
+  import("./pickup-location-map").then((module) => ({ default: module.PickupLocationMap }))
+);
+
+const EMPTY_LOCALIZED_TEXT_SOURCE: LocalizedTextSource = { text: "", source: "vi" };
+
+const flightTerms = [
+  {
+    title: "1. Giới thiệu chung",
+    content: [
+      "Các điều khoản và điều kiện này quy định quyền và nghĩa vụ giữa đơn vị cung cấp dịch vụ và khách hàng khi tham gia các hoạt động dù lượn tandem (bay đôi có phi công điều khiển).",
+      "Khi thực hiện đặt lịch, thanh toán hoặc tham gia chuyến bay, khách hàng được hiểu là đã đọc, hiểu và đồng ý với toàn bộ nội dung của điều khoản này."
+    ]
+  },
+  {
+    title: "2. Điều kiện tham gia bay",
+    content: [
+      "Khách hàng tham gia dịch vụ cần đáp ứng các điều kiện sau:",
+      "Có đầy đủ năng lực hành vi dân sự theo quy định pháp luật.",
+      "Độ tuổi tối thiểu từ 6 tuổi trở lên; trẻ em cần có người giám hộ đồng ý.",
+      "Cân nặng phù hợp với điều kiện thiết bị và thời tiết thực tế.",
+      "Không sử dụng rượu bia, chất kích thích trước khi bay.",
+      "Không mắc các bệnh lý ảnh hưởng đến an toàn bay.",
+      "Đơn vị tổ chức và phi công có quyền từ chối phục vụ nếu đánh giá khách hàng không đủ điều kiện an toàn để tham gia bay."
+    ]
+  },
+  {
+    title: "3. Quy định về thời tiết và an toàn bay",
+    content: [
+      "Hoạt động dù lượn phụ thuộc trực tiếp vào điều kiện thời tiết và yếu tố an toàn thực tế.",
+      "Chuyến bay có thể bị trì hoãn, thay đổi thời gian hoặc hủy bỏ trong các trường hợp gió mạnh, mưa, dông sét, sương mù hoặc các điều kiện không đảm bảo an toàn.",
+      "Quyết định cuối cùng thuộc về phi công và đội ngũ vận hành."
+    ]
+  },
+  {
+    title: "4. Quy trình đặt lịch và thanh toán",
+    content: [
+      "Khách hàng có thể đặt lịch thông qua website, hotline hoặc các kênh chính thức của công ty.",
+      "Để xác nhận lịch bay, khách hàng cần thanh toán tiền cọc theo chính sách từng thời điểm.",
+      "Trong trường hợp hủy chuyến do thời tiết hoặc lý do an toàn, khách hàng sẽ được hỗ trợ đổi lịch hoặc hoàn tiền theo chính sách áp dụng."
+    ]
+  },
+  {
+    title: "5. Cam kết và trách nhiệm của khách hàng",
+    content: [
+      "Khách hàng cam kết cung cấp thông tin trung thực, tuân thủ hướng dẫn của phi công, mặc trang phục phù hợp và không có hành vi gây nguy hiểm cho bản thân hoặc người khác.",
+      "Khách hàng chịu trách nhiệm đối với tài sản cá nhân và các thiệt hại phát sinh do lỗi cá nhân."
+    ]
+  },
+  {
+    title: "6. Ghi hình và sử dụng hình ảnh",
+    content: [
+      "Trong quá trình cung cấp dịch vụ, công ty có thể chụp ảnh, quay video trải nghiệm bay để phục vụ mục đích truyền thông và quảng bá.",
+      "Nếu khách hàng không đồng ý sử dụng hình ảnh, cần thông báo trước với nhân viên vận hành."
+    ]
+  },
+  {
+    title: "7. Giới hạn trách nhiệm",
+    content: [
+      "Dù lượn là hoạt động thể thao ngoài trời có yếu tố mạo hiểm tự nhiên.",
+      "Đơn vị tổ chức không chịu trách nhiệm đối với các sự cố phát sinh từ việc khách hàng vi phạm hướng dẫn an toàn hoặc các trường hợp bất khả kháng."
+    ]
+  },
+  {
+    title: "8. Quyền từ chối cung cấp dịch vụ",
+    content: [
+      "Đơn vị tổ chức có quyền từ chối hoặc chấm dứt cung cấp dịch vụ nếu khách hàng có dấu hiệu say xỉn, gây rối, không tuân thủ hướng dẫn an toàn hoặc không đảm bảo điều kiện bay an toàn."
+    ]
+  },
+  {
+    title: "9. Bảo mật thông tin",
+    content: [
+      "Thông tin cá nhân của khách hàng sẽ được bảo mật và chỉ sử dụng cho mục đích vận hành dịch vụ, thanh toán và hỗ trợ khách hàng."
+    ]
+  },
+  {
+    title: "10. Điều khoản cuối cùng",
+    content: [
+      "Đơn vị tổ chức có quyền cập nhật hoặc điều chỉnh các điều khoản này nhằm đảm bảo an toàn vận hành và phù hợp với quy định pháp luật hiện hành."
+    ]
+  }
+];
+
+const BookingFeatureItem = ({ text, source }: LocalizedTextSource) => {
+  const label = useTranslatedText(text, { source });
+  return <li>{label}</li>;
+};
+
 export const BookingForm = ({ serviceSlug, selectedDate, selectedTime }: BookingFormProps) => {
   const navigate = useNavigate();
   const { account } = useAuth();
-  const { tText } = useI18n();
+  const { locale, tText } = useI18n();
   const [successMessage, setSuccessMessage] = useState<string | null>(null);
   const [pickupPoint, setPickupPoint] = useState<PickupLocation | null>(null);
   const [pickupConfirmed, setPickupConfirmed] = useState(false);
   const [resolvedPickupAddress, setResolvedPickupAddress] = useState("");
   const [debouncedPickupAddress, setDebouncedPickupAddress] = useState("");
+  const [termsDialogOpen, setTermsDialogOpen] = useState(false);
 
   const accountNeedsContactDetails = !account?.phone || account.phone.startsWith("EMAIL");
   const accountPhone = accountNeedsContactDetails ? "" : account?.phone ?? "";
@@ -147,7 +236,8 @@ export const BookingForm = ({ serviceSlug, selectedDate, selectedTime }: Booking
     }
   }, [pickupAddress, pickupOption, resolvedPickupAddress, setValue]);
 
-  const serviceName = useTranslatedText(servicePackage?.name ?? serviceSlug);
+  const serviceNameSource = servicePackage ? resolveServiceNameSource(servicePackage, locale) : EMPTY_LOCALIZED_TEXT_SOURCE;
+  const serviceName = useTranslatedText(serviceNameSource.text || serviceSlug, { source: serviceNameSource.source });
   const pickupNeedsConfirmation = pickupOption === "pickup";
   const pickupReady = !pickupNeedsConfirmation || Boolean(pickupConfirmed && pickupPoint);
 
@@ -219,7 +309,7 @@ export const BookingForm = ({ serviceSlug, selectedDate, selectedTime }: Booking
               <span>{tText("Dịch vụ đi kèm")}</span>
               <ul>
                 {servicePackage.included_features.map((feature) => (
-                  <li key={feature.id}>{tText(feature.name)}</li>
+                  <BookingFeatureItem key={feature.id} {...resolveFeatureNameSource(feature, locale)} />
                 ))}
               </ul>
             </div>
@@ -340,7 +430,9 @@ export const BookingForm = ({ serviceSlug, selectedDate, selectedTime }: Booking
                       <p className="m-0 text-sm text-stone-600">
                         {tText("Chọn đúng ghim như app gọi xe. Nếu cần, bấm vào bản đồ để chỉnh lại vị trí rồi xác nhận điểm đón.")}
                       </p>
-                      <PickupLocationMap point={pickupPoint} onChange={handlePickupMapChange} />
+                      <Suspense fallback={<div className="pickup-location-map" aria-hidden="true" />}>
+                        <PickupLocationMap point={pickupPoint} onChange={handlePickupMapChange} />
+                      </Suspense>
                       <div className="flex flex-wrap items-center justify-between gap-3">
                         <span className="text-xs font-medium text-stone-500">
                           {pickupPoint.lat.toFixed(6)}, {pickupPoint.lng.toFixed(6)}
@@ -370,10 +462,16 @@ export const BookingForm = ({ serviceSlug, selectedDate, selectedTime }: Booking
               </div>
             </div>
 
-            <label className="terms-check">
-              <input type="checkbox" {...register("agree_terms", { required: true })} />
-              <span>{tText("Tôi đồng ý điều khoản bay, điều kiện sức khỏe và chính sách hoàn hủy lịch đặt của doanh nghiệp.")}</span>
-            </label>
+            <div className="terms-check">
+              <input id="booking-flight-terms" type="checkbox" {...register("agree_terms", { required: true })} />
+              <span>
+                <label htmlFor="booking-flight-terms">{tText("Tôi đồng ý với")}</label>{" "}
+                <button type="button" className="terms-link" onClick={() => setTermsDialogOpen(true)}>
+                  {tText("điều khoản bay")}
+                </button>{" "}
+                <label htmlFor="booking-flight-terms">{tText("của doanh nghiệp.")}</label>
+              </span>
+            </div>
 
             {mutation.error instanceof Error ? <p className="form-error">{mutation.error.message}</p> : null}
 
@@ -386,6 +484,30 @@ export const BookingForm = ({ serviceSlug, selectedDate, selectedTime }: Booking
           </form>
         </Panel>
       </Card>
+
+      <Dialog
+        open={termsDialogOpen}
+        onOpenChange={setTermsDialogOpen}
+        title="Điều khoản và điều kiện tham gia dịch vụ dù lượn"
+        description="Áp dụng cho khách hàng sử dụng dịch vụ tại Da Nang Paragliding"
+        className="flight-terms-dialog"
+        footer={
+          <Button type="button" onClick={() => setTermsDialogOpen(false)}>
+            {tText("Đóng")}
+          </Button>
+        }
+      >
+        <div className="flight-terms-content">
+          {flightTerms.map((section) => (
+            <section key={section.title}>
+              <h3>{section.title}</h3>
+              {section.content.map((paragraph) => (
+                <p key={paragraph}>{paragraph}</p>
+              ))}
+            </section>
+          ))}
+        </div>
+      </Dialog>
     </div>
   );
 };

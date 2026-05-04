@@ -69,7 +69,7 @@ export const BookingPage = () => {
   if (!bookingContext.service) {
     return (
       <SiteLayout>
-        <section className="section">
+        <section className="section customer-flow-section">
           <Container className="stack">
             <Badge tone="danger">{tText("Thiếu thông tin đặt lịch")}</Badge>
             <h2 className="detail-title">{tText("Hãy chọn một gói dịch vụ trước khi đặt lịch.")}</h2>
@@ -85,7 +85,7 @@ export const BookingPage = () => {
   if (!isAuthenticated) {
     return (
       <SiteLayout>
-        <section className="section">
+        <section className="section customer-flow-section">
           <Container className="stack">
             <Badge>{tText("Bắt buộc đăng nhập")}</Badge>
             <h2 className="detail-title">{tText("Đăng nhập để tiếp tục đặt lịch")}</h2>
@@ -103,25 +103,11 @@ export const BookingPage = () => {
 
   return (
     <SiteLayout>
-      <section className="section">
+      <section className="section customer-flow-section">
         <Container className="stack">
-          <div className="section-heading">
-            <div>
-              <Badge>{tText("Thông tin hành khách")}</Badge>
-              <h2>{tText("Hoàn tất biểu mẫu đặt lịch")}</h2>
-            </div>
-            <p>{tText("Khách có thể đổi ngày, khung giờ và xem thời tiết theo giờ bằng overlay ngay trên ô lịch đang hover.")}</p>
-          </div>
 
           <Card>
             <Panel className="stack">
-              <div className="booking-section-head">
-                <div>
-                  <Badge>{tText("Chọn lại lịch nếu cần")}</Badge>
-                  <h3>{tText("Lịch bay và thời tiết theo giờ")}</h3>
-                  <p>{tText("Ô trống có thể đặt. Ô X đã hết phi công hoặc bị khóa. Lịch chỉ hiển thị từ ngày hiện tại trở đi.")}</p>
-                </div>
-              </div>
               <BookingCalendar
                 year={calendarState.year}
                 month={calendarState.month}
@@ -134,17 +120,6 @@ export const BookingPage = () => {
             </Panel>
           </Card>
 
-          <div className="info-grid">
-            {bookingRules.map((item) => (
-              <Card key={item} className="info-card">
-                <Panel className="stack-sm">
-                  <strong>{tText("Quy tắc đặt lịch")}</strong>
-                  <p>{tText(item)}</p>
-                </Panel>
-              </Card>
-            ))}
-          </div>
-
           {bookingContext.date && bookingContext.time ? (
             <BookingForm
               serviceSlug={bookingContext.service}
@@ -156,7 +131,6 @@ export const BookingPage = () => {
               <Panel className="calendar-selection-card">
                 <Badge tone="danger">{tText("Chưa chọn khung giờ")}</Badge>
                 <strong>{tText("Hãy chọn một ô còn trống trên lịch trước khi điền biểu mẫu đặt lịch.")}</strong>
-                <small>{tText("Thông tin thời tiết theo giờ sẽ hiện dạng overlay ngay trên ô lịch khi trỏ vào từng khung giờ.")}</small>
               </Panel>
             </Card>
           )}

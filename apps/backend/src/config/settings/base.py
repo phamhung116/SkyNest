@@ -43,6 +43,7 @@ INSTALLED_APPS = [
     "modules.tracking",
     "modules.translation",
     "modules.notifications",
+    "modules.chatbot",
 ]
 
 MIDDLEWARE = [
@@ -112,6 +113,7 @@ REST_FRAMEWORK = {
         "auth": os.getenv("DRF_AUTH_THROTTLE_RATE", "10/minute" if IS_PRODUCTION_ENV else "60/minute"),
         "lookup": os.getenv("DRF_LOOKUP_THROTTLE_RATE", "30/minute" if IS_PRODUCTION_ENV else "300/minute"),
         "translate": os.getenv("DRF_TRANSLATE_THROTTLE_RATE", "60/minute" if IS_PRODUCTION_ENV else "600/minute"),
+        "chatbot": os.getenv("DRF_CHATBOT_THROTTLE_RATE", "20/minute" if IS_PRODUCTION_ENV else "300/minute"),
     },
     "UNAUTHENTICATED_USER": None,
 }
@@ -191,6 +193,11 @@ LANGBLY_TRANSLATE_ENDPOINT = os.getenv(
 )
 LANGBLY_TRANSLATE_QUALITY = os.getenv("LANGBLY_TRANSLATE_QUALITY", "standard")
 LANGBLY_TRANSLATE_CACHE_SECONDS = int(os.getenv("LANGBLY_TRANSLATE_CACHE_SECONDS", "2592000"))
+OPENAI_API_KEY = os.getenv("OPENAI_API_KEY", "")
+OPENAI_CHATBOT_MODEL = os.getenv("OPENAI_CHATBOT_MODEL", "gpt-4o-mini")
+OPENAI_CHATBOT_ENDPOINT = os.getenv("OPENAI_CHATBOT_ENDPOINT", "https://api.openai.com/v1/responses")
+OPENAI_CHATBOT_TIMEOUT_SECONDS = int(os.getenv("OPENAI_CHATBOT_TIMEOUT_SECONDS", "20"))
+OPENAI_CHATBOT_SYSTEM_PROMPT = os.getenv("OPENAI_CHATBOT_SYSTEM_PROMPT", "")
 
 EMAIL_BACKEND = os.getenv("EMAIL_BACKEND", "django.core.mail.backends.console.EmailBackend")
 EMAIL_HOST = os.getenv("EMAIL_HOST", "")

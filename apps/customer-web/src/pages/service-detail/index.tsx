@@ -6,10 +6,10 @@ import type { ServiceFeature } from "@paragliding/api-client";
 import { AlertCircle, CheckCircle2, ChevronDown, Eye } from "lucide-react";
 import { formatCurrency, formatDate } from "@/shared/lib/format";
 import {
-  localizeFeatureName,
-  localizeServiceDescription,
-  localizeServiceName,
-  localizeServiceShortDescription
+  resolveFeatureNameSource,
+  resolveServiceDescriptionSource,
+  resolveServiceNameSource,
+  resolveServiceShortDescriptionSource
 } from "@/shared/lib/localized-content";
 import { availabilityQueryOptions, serviceQueryOptions } from "@/shared/lib/query-options";
 import { useTranslatedText } from "@/shared/lib/use-translated-text";
@@ -38,7 +38,8 @@ const formatSelectedSlotLabel = (value: { date: string; time: string } | null, l
 
 const IncludedFeatureLabel = ({ feature }: { feature: ServiceFeature }) => {
   const { locale } = useI18n();
-  const label = useTranslatedText(localizeFeatureName(feature, locale));
+  const labelSource = resolveFeatureNameSource(feature, locale);
+  const label = useTranslatedText(labelSource.text, { source: labelSource.source });
 
   return <span className="text-sm font-medium text-stone-700">{label}</span>;
 };
@@ -89,12 +90,18 @@ export const ServiceDetailPage = () => {
     );
   };
 
-  const localizedServiceName = servicePackage ? localizeServiceName(servicePackage, locale) : "";
-  const localizedServiceShortDescription = servicePackage ? localizeServiceShortDescription(servicePackage, locale) : "";
-  const localizedServiceDescription = servicePackage ? localizeServiceDescription(servicePackage, locale) : "";
-  const serviceName = useTranslatedText(localizedServiceName);
-  const serviceShortDescription = useTranslatedText(localizedServiceShortDescription);
-  const serviceDescription = useTranslatedText(localizedServiceDescription);
+  const serviceNameSource = servicePackage ? resolveServiceNameSource(servicePackage, locale) : { text: "", source: "vi" as const };
+  const serviceShortDescriptionSource = servicePackage
+    ? resolveServiceShortDescriptionSource(servicePackage, locale)
+    : { text: "", source: "vi" as const };
+  const serviceDescriptionSource = servicePackage
+    ? resolveServiceDescriptionSource(servicePackage, locale)
+    : { text: "", source: "vi" as const };
+  const serviceName = useTranslatedText(serviceNameSource.text, { source: serviceNameSource.source });
+  const serviceShortDescription = useTranslatedText(serviceShortDescriptionSource.text, {
+    source: serviceShortDescriptionSource.source
+  });
+  const serviceDescription = useTranslatedText(serviceDescriptionSource.text, { source: serviceDescriptionSource.source });
   const selectedSlotLabel = selectedSlot ? formatSelectedSlotLabel(selectedSlot, locale) : tText("Chưa chọn khung giờ");
 
   if (!servicePackage) {

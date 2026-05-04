@@ -2,13 +2,12 @@ import type { PropsWithChildren } from "react";
 import { useEffect, useMemo, useRef, useState } from "react";
 import { Link, NavLink, useLocation } from "react-router-dom";
 import { Button, Container } from "@paragliding/ui";
-import { Menu, UserRound, X } from "lucide-react";
-import { FaEnvelope, FaFacebook, FaLocationDot, FaPhone } from "react-icons/fa6";
-import { motion } from "motion/react";
+import { ArrowUp, Mail, MapPin, Menu, Phone, UserRound, X } from "lucide-react";
 import { routes } from "@/shared/config/routes";
 import { businessInfo } from "@/shared/constants/business";
 import { useAuth } from "@/shared/providers/auth-provider";
 import { useI18n, type Locale } from "@/shared/providers/i18n-provider";
+import { ChatbotWidget } from "@/widgets/chatbot/chatbot-widget";
 
 export const Banner = ({ title, subtitle, image }: { title: string; subtitle?: string; image: string }) => {
   const { tText } = useI18n();
@@ -18,16 +17,16 @@ export const Banner = ({ title, subtitle, image }: { title: string; subtitle?: s
   return (
     <section className="relative mt-20 mb-12 flex h-[40vh] items-center overflow-hidden md:mb-20 md:h-[50vh]">
       <div className="absolute inset-0 z-0">
-        <img src={image} alt={displayTitle} className="h-full w-full object-cover" referrerPolicy="no-referrer" />
+        <img src={image} alt={displayTitle} className="h-full w-full object-cover" decoding="async" referrerPolicy="no-referrer" />
         <div className="absolute inset-0 bg-gradient-to-r from-black/80 to-black/20" />
       </div>
       <div className="relative z-10 mx-auto w-full max-w-7xl px-4 text-white sm:px-6 lg:px-8">
-        <motion.div initial={{ x: -50, opacity: 0 }} animate={{ x: 0, opacity: 1 }} transition={{ duration: 0.8 }}>
+        <div>
           <h1 className="mb-4 text-4xl font-black uppercase tracking-tighter md:text-7xl">{displayTitle}</h1>
           {displaySubtitle ? (
             <p className="max-w-2xl text-lg font-medium leading-relaxed text-stone-300 md:text-xl">{displaySubtitle}</p>
           ) : null}
-        </motion.div>
+        </div>
       </div>
     </section>
   );
@@ -44,6 +43,7 @@ export const SiteLayout = ({ children, hideHeader = false, hideFooter = false }:
   const location = useLocation();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [profileMenuOpen, setProfileMenuOpen] = useState(false);
+  const [showScrollTop, setShowScrollTop] = useState(false);
   const profileMenuRef = useRef<HTMLDivElement | null>(null);
 
   const navItems = [
@@ -79,6 +79,16 @@ export const SiteLayout = ({ children, hideHeader = false, hideFooter = false }:
     return () => document.removeEventListener("mousedown", handlePointerDown);
   }, []);
 
+  useEffect(() => {
+    const handleScroll = () => {
+      setShowScrollTop(window.scrollY > 160);
+    };
+
+    handleScroll();
+    window.addEventListener("scroll", handleScroll, { passive: true });
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, []);
+
   const avatarLabel = useMemo(() => {
     const fullName = account?.full_name?.trim();
     if (!fullName) {
@@ -93,23 +103,29 @@ export const SiteLayout = ({ children, hideHeader = false, hideFooter = false }:
   }, [account?.full_name]);
 
   const renderLocaleSwitcher = () => {
-    const options: Array<{ label: string; value: Locale }> = [
-      { label: "VI", value: "vi" },
-      { label: "EN", value: "en" }
+    const options: Array<{ alt: string; flagSrc: string; value: Locale }> = [
+      { alt: "VN", flagSrc: "https://flagcdn.com/w40/vn.png", value: "vi" },
+      { alt: "UK", flagSrc: "https://flagcdn.com/w40/gb.png", value: "en" }
     ];
 
     return (
-      <div className="locale-switcher" role="group" aria-label={t("choose_language")} aria-busy={isTranslating}>
+      <div className="flex items-center gap-2 ml-4 border-l border-stone-200 pl-4" role="group" aria-label={t("choose_language")} aria-busy={isTranslating}>
         {options.map((option) => (
           <button
             key={option.value}
             type="button"
-            className={option.value === locale ? "is-active" : ""}
+            className={`transition-opacity ${option.value === locale ? 'opacity-100' : 'opacity-40 hover:opacity-100'}`}
             aria-pressed={option.value === locale}
             title={option.value === "vi" ? t("language_vi") : t("language_en")}
             onClick={() => setLocale(option.value)}
           >
-            {option.label}
+            <img
+              src={option.flagSrc}
+              alt={option.alt}
+              className="h-4 w-6 rounded-sm object-cover shadow-sm"
+              loading="lazy"
+              decoding="async"
+            />
           </button>
         ))}
       </div>
@@ -285,13 +301,13 @@ export const SiteLayout = ({ children, hideHeader = false, hideFooter = false }:
                 <h3 className="mb-6 font-bold">{tText("Liên hệ")}</h3>
                 <ul className="space-y-3 text-sm text-stone-400">
                   <li className="flex items-center gap-2">
-                    <FaLocationDot size={16} /> {tText("Bán đảo Sơn Trà, Đà Nẵng")}
+                    <MapPin size={16} /> {tText("Bán đảo Sơn Trà, Đà Nẵng")}
                   </li>
                   <li className="flex items-center gap-2">
-                    <FaPhone size={16} /> +84 123 456 789
+                    <Phone size={16} /> +84 123 456 789
                   </li>
                   <li className="flex items-center gap-2">
-                    <FaEnvelope size={16} /> info@danangparagliding.vn
+                    <Mail size={16} /> info@danangparagliding.vn
                   </li>
                 </ul>
               </div>
@@ -300,13 +316,19 @@ export const SiteLayout = ({ children, hideHeader = false, hideFooter = false }:
                 <h3 className="mb-6 font-bold">{tText("Theo dõi")}</h3>
                 <div className="flex gap-4">
                   <div className="flex h-10 w-10 cursor-pointer items-center justify-center rounded-full bg-stone-800 transition-colors hover:bg-brand">
-                    <a href="https://www.facebook.com/profile.php?id=100064087207931">
-                      <FaFacebook />
+                    <a href="https://www.facebook.com/profile.php?id=100064087207931" aria-label="Facebook">
+                      <span className="font-bold" aria-hidden="true">f</span>
                     </a>
                   </div>
                   <div className="flex h-10 w-10 cursor-pointer items-center justify-center rounded-full bg-stone-800 transition-colors hover:bg-brand">
                     <a href={businessInfo.zaloUrl} className="flex h-full w-full items-center justify-center">
-                      <img src="https://conex-agency.com/images/icon_zalo9.png" alt="Zalo" style={{ width: "50%" }} />
+                      <img
+                        src="https://conex-agency.com/images/icon_zalo9.png"
+                        alt="Zalo"
+                        loading="lazy"
+                        decoding="async"
+                        style={{ width: "50%" }}
+                      />
                     </a>
                   </div>
                 </div>
@@ -329,6 +351,18 @@ export const SiteLayout = ({ children, hideHeader = false, hideFooter = false }:
       >
         <span>Zalo</span>
       </a>
+      {showScrollTop ? (
+        <button
+        type="button"
+        className="scroll-top-button"
+        aria-label={tText("Lên đầu trang")}
+        title={tText("Lên đầu trang")}
+        onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}
+      >
+        <ArrowUp size={18} strokeWidth={2.7} />
+        </button>
+      ) : null}
+      <ChatbotWidget />
     </div>
   );
 };

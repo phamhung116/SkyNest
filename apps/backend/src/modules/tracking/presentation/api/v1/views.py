@@ -8,6 +8,7 @@ from config.containers import (
     get_tracking_by_phone_use_case,
     start_pilot_tracking_use_case,
     stop_pilot_tracking_use_case,
+    tracking_repository,
     update_flight_status_use_case,
     update_pilot_flight_status_use_case,
 )
@@ -71,6 +72,18 @@ class AdminFlightStatusUpdateApi(APIView):
             )
         except DomainError as exc:
             return error(str(exc), status.HTTP_400_BAD_REQUEST)
+
+
+class AdminBookingTrackingApi(APIView):
+    authentication_classes = [BearerTokenAuthentication]
+    permission_classes = [IsAdminAccount]
+
+    def get(self, request, code: str):
+        tracking = tracking_repository().get_by_booking_code(code)
+        if tracking is None:
+            return error("Không tìm thấy hành trình của lịch đặt.", status.HTTP_404_NOT_FOUND)
+
+        return success(FlightTrackingSerializer(serialize_entity(tracking)).data)
 
 
 class PilotFlightStatusUpdateApi(APIView):

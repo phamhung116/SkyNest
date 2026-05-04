@@ -1,8 +1,8 @@
 import type { PropsWithChildren } from "react";
-import { NavLink } from "react-router-dom";
+import { Link, NavLink } from "react-router-dom";
 import { Badge, Button, Container } from "@paragliding/ui";
-import { useAdminAuth } from "@/shared/providers/auth-provider";
 import { routes } from "@/shared/config/routes";
+import { useAdminAuth } from "@/shared/providers/auth-provider";
 
 const navItems = [
   { to: routes.bookings, label: "Đặt lịch" },
@@ -48,10 +48,16 @@ export const AdminLayout = ({ children }: PropsWithChildren) => {
       <div className="portal-main">
         <header className="portal-topbar">
           <Container className="portal-topbar__inner">
-            <div>
-              <strong>Phòng điều phối Dù lượn Đà Nẵng</strong>
-              <p>Lịch đặt là hồ sơ cần duyệt. Tiến độ chuyến bay được cập nhật từ khu vực phi công.</p>
-            </div>
+            <Link className="admin-topbar-brand" to={routes.bookings}>
+              <span className="admin-topbar-brand__logo">
+                <img src="/media/img/logo.jpg" alt="Logo Dù lượn Đà Nẵng" />
+              </span>
+              <span className="admin-topbar-brand__copy">
+                <strong>ĐÀ NẴNG</strong>
+                <small>Dù lượn</small>
+              </span>
+            </Link>
+
             <div className="admin-topbar-actions">
               <div className="portal-topbar__profile">
                 <span className="portal-user-avatar">{initials}</span>

@@ -15,9 +15,11 @@
     "@tanstack/react-query": "^5.90.5",
     "@tinymce/tinymce-react": "^6.3.0",
     "clsx": "^2.1.1",
+    "leaflet": "^1.9.4",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "react-hook-form": "^7.66.0",
+    "react-leaflet": "^4.2.1",
     "react-router-dom": "^6.30.1",
     "tinymce": "^8.4.0",
     "zod": "^4.1.11"

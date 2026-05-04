@@ -5,8 +5,6 @@ from datetime import UTC, datetime
 from modules.bookings.application.interfaces import BookingNotificationGateway
 from modules.bookings.domain.repositories import BookingRepository
 from modules.bookings.domain.value_objects import (
-    BOOKING_APPROVAL_CONFIRMED,
-    FLIGHT_STATUS_WAITING,
     PAYMENT_STATUS_EXPIRED,
     PAYMENT_STATUS_FAILED,
     PAYMENT_STATUS_PAID,
@@ -64,8 +62,9 @@ class CompleteOnlinePaymentUseCase:
 
         transaction = self.payment_transaction_repository.mark_paid(booking_code)
         booking.payment_status = PAYMENT_STATUS_PAID
-        booking.approval_status = BOOKING_APPROVAL_CONFIRMED
-        booking.flight_status = FLIGHT_STATUS_WAITING
         booking = self.booking_repository.update(booking)
-        self.notification_gateway.send_booking_confirmation(booking)
+        self.notification_gateway.send_booking_update(
+            booking,
+            f"Lá»‹ch Ä‘áº·t {booking.code} Ä‘Ã£ ghi nháº­n thanh toÃ¡n vÃ  Ä‘ang chá» quáº£n trá»‹ viÃªn xÃ¡c nháº­n.",
+        )
         return {"booking": booking, "transaction": transaction}

@@ -125,17 +125,64 @@ body {
 }
 
 .portal-topbar {
+  margin-bottom: 1.25rem;
   border: 1px solid var(--line);
   border-radius: 24px;
   background: rgba(255, 255, 255, 0.9);
 }
 
 .portal-topbar__inner {
+  width: 100%;
+  margin: 0;
+  box-sizing: border-box;
   padding: 1rem 1.25rem;
   display: flex;
   align-items: center;
   justify-content: space-between;
   gap: 1rem;
+}
+
+.admin-topbar-brand {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.95rem;
+  color: var(--ink);
+}
+
+.admin-topbar-brand__logo {
+  width: 3.5rem;
+  height: 3.5rem;
+  flex: 0 0 auto;
+  overflow: hidden;
+  border-radius: 0.65rem;
+  background: #ffffff;
+  box-shadow: 0 10px 24px rgba(80, 18, 33, 0.12);
+  outline: 1px solid var(--line);
+}
+
+.admin-topbar-brand__logo img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.admin-topbar-brand__copy {
+  display: grid;
+  gap: 0.1rem;
+}
+
+.admin-topbar-brand__copy strong {
+  font-size: 1.28rem;
+  line-height: 1;
+}
+
+.admin-topbar-brand__copy small {
+  color: var(--muted);
+  font-size: 0.76rem;
+  font-weight: 800;
+  letter-spacing: 0.2em;
+  line-height: 1;
+  text-transform: uppercase;
 }
 
 .portal-topbar__inner strong {
@@ -218,6 +265,18 @@ body {
   letter-spacing: -0.04em;
 }
 
+.post-detail-heading {
+  flex-wrap: nowrap;
+}
+
+.post-detail-heading__back {
+  flex: 0 0 auto;
+}
+
+.post-detail-heading__back .ui-button {
+  white-space: nowrap;
+}
+
 .portal-heading__note {
   max-width: 340px;
   padding: 1rem 1.05rem;
@@ -282,6 +341,14 @@ body {
 .admin-card__header p {
   margin: 0.3rem 0 0;
   color: var(--muted);
+}
+
+.admin-account-toolbar {
+  align-items: center;
+}
+
+.admin-account-toolbar__filter .ui-select {
+  min-width: 220px;
 }
 
 .toolbar-row,
@@ -360,6 +427,33 @@ body {
 
 .status-stack .ui-badge {
   justify-self: start;
+}
+
+.admin-booking-status--warning {
+  background: rgba(217, 119, 6, 0.14);
+  border-color: rgba(217, 119, 6, 0.2);
+  color: #9a3412;
+}
+
+.admin-status-badge {
+  max-width: max-content;
+  white-space: nowrap;
+}
+
+.admin-icon-action.ui-button {
+  width: 2.25rem;
+  min-height: 2.25rem;
+  padding: 0;
+  border-radius: 999px;
+}
+
+.admin-icon-action--danger.ui-button {
+  color: var(--danger);
+}
+
+.admin-icon-action--danger.ui-button:hover {
+  border-color: rgba(166, 61, 53, 0.24);
+  background: var(--danger-soft);
 }
 
 .action-menu {
@@ -625,6 +719,75 @@ body {
   background: rgba(255, 246, 246, 0.92);
 }
 
+.admin-call-pilot-button {
+  display: inline-flex;
+  min-height: 42px;
+  align-items: center;
+  justify-content: center;
+  padding: 0.72rem 1rem;
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  background: #ffffff;
+  color: var(--accent-strong);
+  font-size: 0.86rem;
+  font-weight: 800;
+}
+
+.admin-call-pilot-button:hover {
+  border-color: rgba(201, 24, 66, 0.2);
+  background: var(--accent-soft);
+}
+
+.admin-booking-map {
+  position: relative;
+  min-height: 360px;
+  overflow: hidden;
+  border: 1px solid var(--line);
+  border-radius: 24px;
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.96) 0%, rgba(255, 240, 244, 0.78) 100%);
+}
+
+.admin-booking-map .leaflet-container {
+  height: 100%;
+  width: 100%;
+}
+
+.admin-booking-map__empty {
+  position: absolute;
+  inset: auto 1rem 1rem 1rem;
+  z-index: 500;
+  padding: 0.85rem 1rem;
+  border: 1px solid rgba(126, 17, 43, 0.12);
+  border-radius: 16px;
+  background: rgba(255, 255, 255, 0.94);
+  color: var(--muted);
+}
+
+.admin-map-marker {
+  display: grid;
+  place-items: center;
+  border-radius: 999px;
+  background: #ffffff;
+  box-shadow: 0 10px 24px rgba(15, 23, 42, 0.18);
+}
+
+.admin-map-marker svg {
+  display: block;
+  width: 24px;
+  height: 24px;
+}
+
+.admin-map-marker--car {
+  color: #2563eb;
+  border: 2px solid #2563eb;
+}
+
+.admin-map-marker--destination {
+  color: #dc2626;
+  background: transparent;
+  box-shadow: 0 10px 24px rgba(220, 38, 38, 0.2);
+}
+
 .booking-decision-card .ui-button,
 .post-editor-sidebar__actions .ui-button,
 .admin-detail-card .table-actions--inline .ui-button {
@@ -637,7 +800,7 @@ body {
   display: grid;
   grid-template-columns: minmax(0, 1fr) 340px;
   gap: 1.1rem;
-  align-items: start;
+  align-items: stretch;
 }
 
 .service-editor-layout {
@@ -683,8 +846,16 @@ body {
   line-height: 1.5;
 }
 
+.post-editor-main {
+  display: grid;
+  min-height: 100%;
+}
+
 .rich-text-editor {
+  display: grid;
+  grid-template-rows: auto minmax(0, 1fr);
   min-width: 0;
+  min-height: calc(100vh - 220px);
   border: 1px solid rgba(126, 17, 43, 0.14);
   border-radius: 8px;
   overflow: hidden;
@@ -693,6 +864,7 @@ body {
 }
 
 .rich-text-editor .tox.tox-tinymce {
+  min-height: 680px;
   border: 0;
   border-radius: 8px;
 }
@@ -851,6 +1023,14 @@ body {
     position: static;
   }
 
+  .rich-text-editor {
+    min-height: auto;
+  }
+
+  .rich-text-editor .tox.tox-tinymce {
+    min-height: 520px;
+  }
+
 }
 
 @media (max-width: 720px) {
@@ -867,6 +1047,7 @@ body {
 
   .portal-topbar__inner,
   .portal-heading,
+  .admin-account-toolbar,
   .admin-topbar-actions,
   .toolbar-row,
   .filter-row,

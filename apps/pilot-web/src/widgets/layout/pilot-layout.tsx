@@ -1,6 +1,6 @@
-import type { PropsWithChildren } from "react";
+﻿import type { PropsWithChildren } from "react";
 import { Badge, Button, Container } from "@paragliding/ui";
-import { NavLink } from "react-router-dom";
+import { Link, NavLink } from "react-router-dom";
 import { usePilotAuth } from "@/shared/providers/auth-provider";
 import { routes } from "@/shared/config/routes";
 
@@ -43,24 +43,27 @@ export const PilotLayout = ({ children }: PropsWithChildren) => {
       </aside>
       <main className="pilot-main">
         <header className="pilot-topbar">
-          <Container>
-            <div className="pilot-topbar__inner">
-              <div>
-                <strong>Bảng điều phối phi công</strong>
-                <p>Chuyến bay được phân công và nội dung hướng dẫn cho tài khoản phi công đang hoạt động.</p>
-              </div>
-              <div className="pilot-topbar__actions">
-                <div className="pilot-topbar__profile">
-                  <span className="pilot-user-avatar">{initials}</span>
-                  <div className="pilot-user-meta">
-                    <strong>{account?.full_name}</strong>
-                    <small>{account?.email}</small>
-                  </div>
+          <Container className="pilot-topbar__inner">
+            <Link className="pilot-topbar-brand" to={routes.home}>
+              <span className="pilot-topbar-brand__logo">
+                <img src="/media/img/logo.jpg" alt="Logo Dù lượn Đà Nẵng" />
+              </span>
+              <span className="pilot-topbar-brand__copy">
+                <strong>ĐÀ NẴNG</strong>
+                <small>Dù lượn</small>
+              </span>
+            </Link>
+            <div className="pilot-topbar__actions">
+              <div className="pilot-topbar__profile">
+                <span className="pilot-user-avatar">{initials}</span>
+                <div className="pilot-user-meta">
+                  <strong>{account?.full_name}</strong>
+                  <small>{account?.email}</small>
                 </div>
-                <Button variant="ghost" onClick={() => void logout()}>
-                  Đăng xuất
-                </Button>
               </div>
+              <Button variant="ghost" onClick={() => void logout()}>
+                Đăng xuất
+              </Button>
             </div>
           </Container>
         </header>

@@ -103,7 +103,7 @@ export const bookingRules = [
 
 export const checkoutGuidelines = [
   "Đặt lịch online sẽ hiển thị QR và nội dung chuyển khoản theo mã đặt lịch.",
-  "Thanh toán thành công sẽ chuyển lịch đặt sang đã xác nhận.",
+  "Thanh toán thành công sẽ ghi nhận đặt cọc, lịch đặt vẫn chờ quản trị viên xác nhận.",
   "Nếu QR hết hạn, khách cần tạo lại yêu cầu thanh toán mới."
 ];
 

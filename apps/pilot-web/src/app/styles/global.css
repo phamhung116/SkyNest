@@ -120,17 +120,65 @@ body {
 }
 
 .pilot-topbar {
+  margin-bottom: 1.25rem;
   border: 1px solid var(--line);
   border-radius: 24px;
   background: rgba(255, 255, 255, 0.9);
 }
 
 .pilot-topbar__inner {
+  width: 100%;
+  margin: 0;
+  box-sizing: border-box;
   padding: 1rem 1.25rem;
   display: flex;
   justify-content: space-between;
   align-items: center;
   gap: 1rem;
+}
+
+.pilot-topbar-brand {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.95rem;
+  color: var(--ink);
+}
+
+.pilot-topbar-brand__logo {
+  width: 3.5rem;
+  height: 3.5rem;
+  flex: 0 0 auto;
+  overflow: hidden;
+  border-radius: 0.65rem;
+  background: #ffffff;
+  box-shadow: 0 10px 24px rgba(80, 18, 33, 0.12);
+  outline: 1px solid var(--line);
+}
+
+.pilot-topbar-brand__logo img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.pilot-topbar-brand__copy {
+  display: grid;
+  gap: 0.1rem;
+}
+
+.pilot-topbar-brand__copy strong {
+  display: block;
+  font-size: 1.28rem;
+  line-height: 1;
+}
+
+.pilot-topbar-brand__copy small {
+  color: var(--muted);
+  font-size: 0.76rem;
+  font-weight: 800;
+  letter-spacing: 0.2em;
+  line-height: 1;
+  text-transform: uppercase;
 }
 
 .pilot-topbar__actions {
@@ -268,6 +316,84 @@ body {
   gap: 1rem;
 }
 
+.pilot-assigned-list {
+  display: grid;
+  gap: 1rem;
+}
+
+.pilot-list-header {
+  display: flex;
+  align-items: end;
+  justify-content: space-between;
+  gap: 1rem;
+}
+
+.pilot-list-header h3,
+.pilot-list-header p {
+  margin: 0;
+}
+
+.pilot-list-header p {
+  color: var(--muted);
+}
+
+.pilot-booking-list {
+  display: grid;
+  gap: 0.75rem;
+}
+
+.pilot-booking-row {
+  display: grid;
+  grid-template-columns: minmax(180px, 1fr) minmax(220px, 1.2fr) minmax(160px, 0.8fr) auto;
+  gap: 1rem;
+  align-items: center;
+  width: 100%;
+  padding: 1rem;
+  border: 1px solid var(--line);
+  border-radius: 18px;
+  background: rgba(255, 255, 255, 0.9);
+  color: inherit;
+  text-align: left;
+  transition:
+    border-color 140ms ease,
+    background 140ms ease,
+    transform 140ms ease,
+    box-shadow 140ms ease;
+}
+
+.pilot-booking-row:hover {
+  border-color: rgba(201, 24, 66, 0.2);
+  background: rgba(255, 248, 250, 0.96);
+  box-shadow: 0 16px 32px rgba(80, 18, 33, 0.08);
+  transform: translateY(-1px);
+}
+
+.pilot-booking-row .row-meta {
+  display: flex;
+  min-width: 0;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 0.25rem;
+}
+
+.pilot-booking-row .row-meta strong,
+.pilot-booking-row .row-meta small,
+.pilot-booking-row .row-meta span {
+  max-width: 100%;
+}
+
+.pilot-booking-row__action {
+  display: inline-flex;
+  width: 2.25rem;
+  height: 2.25rem;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  color: var(--accent-strong);
+  background: #ffffff;
+}
+
 .pilot-flight-board {
   grid-template-columns: minmax(0, 1.1fr) minmax(340px, 0.9fr);
   align-items: start;
@@ -306,6 +432,14 @@ body {
   border: 1px solid var(--line);
   border-radius: 18px;
   background: rgba(255, 255, 255, 0.88);
+}
+
+.pilot-card-grid .pilot-pickup-summary-card {
+  grid-column: 1 / -1;
+}
+
+.pilot-card-grid .pilot-flight-time-summary-card {
+  grid-column: span 3;
 }
 
 .pilot-card-grid span {
@@ -362,6 +496,31 @@ body {
 .pilot-flight-map .leaflet-container {
   height: 100%;
   width: 100%;
+}
+
+.pilot-map-marker {
+  display: grid;
+  place-items: center;
+  border-radius: 999px;
+  background: #ffffff;
+  box-shadow: 0 10px 24px rgba(15, 23, 42, 0.18);
+}
+
+.pilot-map-marker svg {
+  display: block;
+  width: 24px;
+  height: 24px;
+}
+
+.pilot-map-marker--car {
+  color: #2563eb;
+  border: 2px solid #2563eb;
+}
+
+.pilot-map-marker--destination {
+  color: #dc2626;
+  background: transparent;
+  box-shadow: 0 10px 24px rgba(220, 38, 38, 0.2);
 }
 
 .pilot-flight-map__empty {
@@ -558,6 +717,7 @@ body {
   .pilot-flight-board,
   .pilot-card-grid,
   .pilot-status-actions,
+  .pilot-booking-row,
   .pilot-post-grid {
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
@@ -594,6 +754,7 @@ body {
   .pilot-flight-board,
   .pilot-card-grid,
   .pilot-status-actions,
+  .pilot-booking-row,
   .pilot-post-grid {
     grid-template-columns: 1fr;
   }

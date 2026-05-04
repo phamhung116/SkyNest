@@ -269,6 +269,23 @@ export type TranslateResult = {
   translations: string[];
 };
 
+export type ChatbotMessagePayload = {
+  role: "user" | "assistant";
+  content: string;
+};
+
+export type ChatbotPayload = {
+  messages: ChatbotMessagePayload[];
+  locale?: LocaleCode;
+  page?: string;
+};
+
+export type ChatbotResult = {
+  id: string;
+  reply: string;
+  model: string;
+};
+
 export type ManagedAccountPayload = {
   full_name: string;
   email: string;

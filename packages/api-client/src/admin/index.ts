@@ -9,7 +9,8 @@ import type {
   ServiceFeature,
   ServiceFeatureWritePayload,
   ServicePackage,
-  ServicePackageWritePayload
+  ServicePackageWritePayload,
+  Tracking
 } from "../types";
 
 export const createAdminApi = (baseUrl: string, getAccessToken?: () => string | null) => {
@@ -26,6 +27,7 @@ export const createAdminApi = (baseUrl: string, getAccessToken?: () => string | 
       }),
     listBookings: () => http.request<Booking[]>("/bookings/"),
     getBooking: (code: string) => http.request<Booking>(`/bookings/${code}/`),
+    getBookingTracking: (code: string) => http.request<Tracking>(`/bookings/${code}/tracking/`),
     cancelBooking: (code: string, payload: BookingCancelPayload) =>
       http.request<Booking>(`/bookings/${code}/cancel/`, {
         method: "POST",

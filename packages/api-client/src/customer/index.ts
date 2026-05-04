@@ -6,6 +6,8 @@ import type {
   Booking,
   BookingCancelPayload,
   BookingCreatePayload,
+  ChatbotPayload,
+  ChatbotResult,
   ChangePasswordPayload,
   EmailAuthStartPayload,
   EmailAuthStartResult,
@@ -110,6 +112,11 @@ export const createCustomerApi = (baseUrl: string, getAccessToken?: () => string
       ),
     translate: (payload: TranslatePayload) =>
       http.request<TranslateResult>("/translate/", {
+        method: "POST",
+        body: JSON.stringify(payload)
+      }),
+    chatbot: (payload: ChatbotPayload) =>
+      http.request<ChatbotResult>("/chatbot/", {
         method: "POST",
         body: JSON.stringify(payload)
       })

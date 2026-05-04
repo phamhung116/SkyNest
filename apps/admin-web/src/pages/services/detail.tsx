@@ -142,9 +142,9 @@ export const ServiceDetailPage = () => {
     saveMutation.mutate({
       ...values,
       slug: values.slug.trim() || slugify(values.name),
-      name_en: values.name.trim(),
-      short_description_en: values.short_description.trim(),
-      description_en: values.description.trim(),
+      name_en: values.name_en?.trim() || values.name.trim(),
+      short_description_en: values.short_description_en?.trim() || values.short_description.trim(),
+      description_en: values.description_en?.trim() || values.description.trim(),
       price: String(values.price),
       included_feature_ids: selectedFeatureIds
     });
@@ -172,11 +172,9 @@ export const ServiceDetailPage = () => {
           <Panel className="admin-stack">
             <form className="service-editor-layout" onSubmit={form.handleSubmit(handleSubmit)}>
               <div className="admin-stack">
-                <div className="inline-field-grid inline-field-grid--two">
-                  <Field label="Tên gói dịch vụ">
-                    <Input {...form.register("name", { required: true })} />
-                  </Field>
-                </div>
+                <Field label="Tên gói dịch vụ">
+                  <Input {...form.register("name", { required: true })} />
+                </Field>
 
                 <div className="inline-field-grid inline-field-grid--two">
                   <Field label="Giá">
@@ -184,17 +182,13 @@ export const ServiceDetailPage = () => {
                   </Field>
                 </div>
 
-                <div className="inline-field-grid inline-field-grid--two">
-                  <Field label="Tổng quan">
-                    <Textarea rows={6} {...form.register("description", { required: true })} />
-                  </Field>
-                </div>
+                <Field label="Tổng quan">
+                  <Textarea rows={6} {...form.register("description", { required: true })} />
+                </Field>
 
-                <div className="inline-field-grid inline-field-grid--two">
-                  <Field label="Mô tả ngắn">
-                    <Textarea rows={3} {...form.register("short_description", { required: true })} />
-                  </Field>
-                </div>
+                <Field label="Mô tả ngắn">
+                  <Textarea rows={3} {...form.register("short_description", { required: true })} />
+                </Field>
 
                 <Card>
                   <Panel className="admin-stack">

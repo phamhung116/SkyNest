@@ -219,8 +219,8 @@ const makeImageUploadHandler = (editor: TinyMceCoreEditor) => {
 };
 
 const createTinyMceInit = (editorRef: { current: TinyMceCoreEditor | null }) => ({
-  height: 540,
-  min_height: 420,
+  height: "100%",
+  min_height: 680,
   menubar: "edit view format table tools",
   plugins: tinyMcePlugins,
   toolbar: tinyMceToolbar,
@@ -441,13 +441,13 @@ export const PostDetailPage = () => {
   return (
     <AdminLayout>
       <div className="portal-stack">
-        <div className="portal-heading">
+        <div className="portal-heading post-detail-heading">
           <div className="portal-heading__text">
             <Badge>{published ? "Đã xuất bản" : "Bản nháp"}</Badge>
             <h1>{isNew ? "Tạo bài viết" : postQuery.data?.title ?? "Chi tiết bài viết"}</h1>
             <p>Chỉnh nội dung, thumbnail và metadata cho bài viết hiển thị trên website khách hàng.</p>
           </div>
-          <Link to={routes.posts}>
+          <Link className="post-detail-heading__back" to={routes.posts}>
             <Button variant="secondary">Quay lại danh sách</Button>
           </Link>
         </div>
@@ -455,14 +455,8 @@ export const PostDetailPage = () => {
         <Card className="post-editor-card">
           <Panel className="admin-stack">
             <form className="post-editor-layout" onSubmit={form.handleSubmit(handlePostSubmit)}>
-              <div className="admin-stack">
+              <div className="post-editor-main">
                 <div className="rich-text-editor">
-                  <div className="admin-card__header">
-                    <div>
-                      <h3>Nội dung bài viết</h3>
-                      <p>Nội dung này sẽ được lưu nguyên định dạng khi publish, bao gồm canh lề, ảnh, caption và link.</p>
-                    </div>
-                  </div>
                   <TinyMceReactEditor
                     licenseKey="gpl"
                     value={editorContentVi}
@@ -511,6 +505,7 @@ export const PostDetailPage = () => {
                   <span>{published ? "Đang xuất bản" : "Lưu bản nháp"}</span>
                 </label>
                 <input type="hidden" {...form.register("content")} />
+                <input type="hidden" {...form.register("content_en")} />
                 {saveMutation.error instanceof Error ? <p className="form-error">{saveMutation.error.message}</p> : null}
                 {deleteMutation.error instanceof Error ? <p className="form-error">{deleteMutation.error.message}</p> : null}
                 <div className="post-editor-sidebar__actions">

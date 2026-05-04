@@ -6,6 +6,7 @@ import type { Account, Booking } from "@paragliding/api-client";
 import { adminApi } from "@/shared/config/api";
 import { routes } from "@/shared/config/routes";
 import { formatCurrency } from "@/shared/lib/format";
+import { AdminBookingTrackingMap } from "@/widgets/tracking-map/admin-booking-tracking-map";
 import { AdminLayout } from "@/widgets/layout/admin-layout";
 
 const cancelledStatuses = new Set(["CANCELLED", "REJECTED"]);
@@ -33,6 +34,16 @@ const statusLabel = (booking: Booking) => {
   return flightLabels[booking.flight_status] ?? booking.flight_status;
 };
 
+const bookingStatusBadgeProps = (booking: Booking) => {
+  if (booking.flight_status === "LANDED" && !cancelledStatuses.has(booking.approval_status)) {
+    return { tone: "success" as const };
+  }
+  if (booking.flight_status === "WAITING_CONFIRMATION" && !cancelledStatuses.has(booking.approval_status)) {
+    return { tone: "danger" as const };
+  }
+  return { className: "admin-booking-status--warning" };
+};
+
 const formatDateTime = (value: string | null) => (value ? new Date(value).toLocaleString("vi-VN") : "-");
 
 export const BookingDetailPage = () => {
@@ -45,6 +56,12 @@ export const BookingDetailPage = () => {
   const bookingQuery = useQuery({
     queryKey: ["admin-booking", code],
     queryFn: () => adminApi.getBooking(code),
+    enabled: Boolean(code)
+  });
+
+  const trackingQuery = useQuery({
+    queryKey: ["admin-booking-tracking", code],
+    queryFn: () => adminApi.getBookingTracking(code),
     enabled: Boolean(code)
   });
 
@@ -91,6 +108,8 @@ export const BookingDetailPage = () => {
     onSuccess: (nextBooking) => {
       queryClient.setQueryData(["admin-booking", code], nextBooking);
       queryClient.invalidateQueries({ queryKey: ["admin-bookings"] });
+      setCancelModalOpen(false);
+      setCancelReason("");
     }
   });
 
@@ -146,7 +165,7 @@ export const BookingDetailPage = () => {
             <Panel className="admin-stack">
               <div className="admin-card__header">
                 <div>
-                  <Badge tone={cancelledStatuses.has(booking.approval_status) ? "danger" : "success"}>
+                  <Badge {...bookingStatusBadgeProps(booking)}>
                     {statusLabel(booking)}
                   </Badge>
                   <h3>{booking.service_name}</h3>
@@ -261,6 +280,27 @@ export const BookingDetailPage = () => {
             <Panel>Đang tải lịch đặt...</Panel>
           </Card>
         )}
+
+        {booking ? (
+          <Card className="admin-detail-card">
+            <Panel className="admin-stack">
+              <div className="admin-card__header">
+                <div>
+                  <Badge>Theo dõi GPS</Badge>
+                  <h3>Lộ trình booking</h3>
+                  <p>Xem vị trí phi công và lộ trình được cập nhật từ app phi công.</p>
+                </div>
+                {booking.assigned_pilot_phone ? (
+                  <a className="admin-call-pilot-button" href={`tel:${booking.assigned_pilot_phone}`}>
+                    Gọi phi công
+                  </a>
+                ) : null}
+              </div>
+              {trackingQuery.error instanceof Error ? <p className="form-error">{trackingQuery.error.message}</p> : null}
+              <AdminBookingTrackingMap booking={booking} tracking={trackingQuery.data ?? null} />
+            </Panel>
+          </Card>
+        ) : null}
 
         <Dialog
           open={cancelModalOpen}

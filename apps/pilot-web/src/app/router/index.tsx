@@ -4,6 +4,7 @@ import { usePilotAuth } from "@/app/providers/auth-provider";
 import { routes } from "@/shared/config/routes";
 
 const PilotAccountPage = lazy(() => import("@/pages/account").then((module) => ({ default: module.PilotAccountPage })));
+const FlightDetailPage = lazy(() => import("@/pages/flights").then((module) => ({ default: module.FlightDetailPage })));
 const FlightsPage = lazy(() => import("@/pages/flights").then((module) => ({ default: module.FlightsPage })));
 const LoginPage = lazy(() => import("@/pages/login").then((module) => ({ default: module.LoginPage })));
 const PostDetailPage = lazy(() => import("@/pages/post-detail").then((module) => ({ default: module.PostDetailPage })));
@@ -29,6 +30,14 @@ export const AppRouter = () => (
       element={
         <ProtectedRoute>
           {page(<FlightsPage />)}
+        </ProtectedRoute>
+      }
+    />
+    <Route
+      path="/flights/:code"
+      element={
+        <ProtectedRoute>
+          {page(<FlightDetailPage />)}
         </ProtectedRoute>
       }
     />

@@ -309,6 +309,10 @@ const staticTextDictionary: Record<string, string> = {
     "The map will appear when the pilot starts taking the guest to the flight site.",
   "Không còn theo dõi đoạn phi công tự di chuyển tới điểm đón, nên khách chỉ thấy GPS từ lúc đã lên xe.":
     "The pilot's private route to pickup is no longer tracked; guests only see GPS after boarding.",
+  "Bản đồ sẽ hiển thị khi phi công bắt đầu theo dõi GPS.":
+    "The map will appear when the pilot starts GPS tracking.",
+  "Với lịch có xe đón, khách sẽ thấy GPS từ lúc phi công bắt đầu đi đón khách.":
+    "For bookings with pickup, guests will see GPS once the pilot starts heading to pick them up.",
   "Nhập thông tin đặt lịch để hiển thị dòng thời gian và vị trí GPS.":
     "Enter booking information to display the timeline and GPS location.",
   "Ngay sau khi khách hàng đặt lịch thành công, lịch đặt có thể được tra cứu lại từ trang này.":
@@ -373,6 +377,9 @@ const staticTextDictionary: Record<string, string> = {
     "Contact information is taken from your account. Update it on the account page if needed.",
   "Tôi đồng ý điều khoản bay, điều kiện sức khỏe và chính sách hoàn hủy lịch đặt của doanh nghiệp.":
     "I agree to the flight terms, health requirements, and the company's cancellation policy.",
+  "Tôi đồng ý với": "I agree to the",
+  "điều khoản bay": "flight terms",
+  "của doanh nghiệp.": "of the company.",
   "Chọn đúng ghim như app gọi xe. Nếu cần, bấm vào bản đồ để chỉnh lại vị trí rồi xác nhận điểm đón.":
     "Choose the correct pin like a ride-hailing app. If needed, tap the map to adjust the pickup point, then confirm it.",
   "Bấm vào vị trí khác trên bản đồ để chỉnh điểm đón chính xác.": "Tap another location on the map to adjust the pickup point accurately.",
@@ -459,18 +466,19 @@ const staticTextDictionary: Record<string, string> = {
   "Hãy tạo lịch đặt trước khi vào trang thanh toán.": "Please create a booking before opening the payment page.",
   "Chọn gói dịch vụ": "Choose a service package",
   "Thanh toán và xác nhận lịch đặt": "Payment and booking confirmation",
-  "Sau khi thanh toán thành công, lịch đặt sẽ chuyển sang đã xác nhận và khách hàng có thể vào trang theo dõi để xem hành trình.":
-    "After successful payment, the booking will be confirmed and guests can open tracking to view the journey.",
+  "Sau khi thanh toán thành công, lịch đặt sẽ chờ quản trị viên xác nhận và khách hàng có thể vào trang theo dõi để xem hành trình.":
+    "After successful payment, the booking will wait for administrator confirmation and guests can open tracking to view the journey.",
   "Hướng dẫn thanh toán": "Payment instructions",
   "Đặt lịch online sẽ hiển thị QR và nội dung chuyển khoản theo mã đặt lịch.":
     "Online booking will show the QR and transfer content for the booking code.",
-  "Thanh toán thành công sẽ chuyển lịch đặt sang đã xác nhận.": "Successful payment will move the booking to confirmed.",
+  "Thanh toán thành công sẽ ghi nhận đặt cọc, lịch đặt vẫn chờ quản trị viên xác nhận.":
+    "Successful payment records the deposit while the booking still waits for administrator confirmation.",
   "Nếu QR hết hạn, khách cần tạo lại yêu cầu thanh toán mới.":
     "If the QR expires, guests need to create a new payment request.",
   "Di chuyển": "Transport",
   "Đặt cọc bằng QR": "QR deposit",
-  "Thanh toán số tiền trả trước qua cổng thanh toán. Sau khi nhà cung cấp trả về trạng thái đã thanh toán, lịch đặt sẽ được xác nhận và email xác nhận sẽ được gửi cho khách.":
-    "Pay the upfront amount through the payment gateway. After the provider returns a paid status, the booking will be confirmed and a confirmation email will be sent to the guest.",
+  "Thanh toán số tiền trả trước qua cổng thanh toán. Sau khi nhà cung cấp trả về trạng thái đã thanh toán, lịch đặt sẽ chờ quản trị viên xác nhận phi công.":
+    "Pay the upfront amount through the payment gateway. After the provider returns a paid status, the booking will wait for an administrator to confirm the pilot.",
   "Số tiền đặt cọc": "Deposit amount",
   "Nội dung chuyển khoản": "Transfer content",
   "Hết hạn lúc": "Expires at",

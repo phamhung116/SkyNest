@@ -3,6 +3,7 @@ import { useQuery } from "@tanstack/react-query";
 import { useNavigate } from "react-router-dom";
 import { Badge, Button, Card, Field, Panel, Select, Tabs, TabsList, TabsTrigger } from "@paragliding/ui";
 import type { Booking } from "@paragliding/api-client";
+import { ChevronRight } from "lucide-react";
 import { adminApi } from "@/shared/config/api";
 import { formatCurrency } from "@/shared/lib/format";
 import { AdminLayout } from "@/widgets/layout/admin-layout";
@@ -24,6 +25,16 @@ const paymentLabels: Record<string, string> = {
   PAID: "Đã thanh toán",
   FAILED: "Thanh toán thất bại",
   REFUNDED: "Đã hoàn tiền"
+};
+
+const bookingStatusBadgeProps = (status: string) => {
+  if (status === "LANDED") {
+    return { tone: "success" as const };
+  }
+  if (status === "WAITING_CONFIRMATION") {
+    return { tone: "danger" as const };
+  }
+  return { className: "admin-booking-status--warning" };
 };
 
 const formatDateTime = (booking: Booking) => `${booking.flight_date} - ${booking.flight_time}`;
@@ -69,22 +80,13 @@ export const BookingsPage = () => {
       <div className="portal-stack">
         <div className="portal-heading">
           <div className="portal-heading__text">
-            <Badge tone="success">Đặt lịch</Badge>
             <h1>Quản lý đặt lịch</h1>
-            <p>Bấm vào một lịch đặt để xem chi tiết, gán phi công hoặc hủy.</p>
-          </div>
-          <div className="portal-heading__note">
-            Lịch đặt đã hủy được tách sang tab riêng để danh sách đang vận hành gọn hơn.
           </div>
         </div>
 
         <Card className="admin-list-card">
           <Panel className="admin-stack">
             <div className="admin-card__header">
-              <div>
-                <h3>Danh sách đặt lịch</h3>
-                <p>Bảng chỉ hiển thị lịch đặt và trạng thái bay. Thao tác hủy nằm trong trang chi tiết.</p>
-              </div>
               <Tabs value={tab} onValueChange={(value) => setTab(value as "active" | "cancelled")}>
                 <TabsList className="admin-tabs">
                   <TabsTrigger value="active">
@@ -153,7 +155,11 @@ export const BookingsPage = () => {
                 {
                   key: "flight",
                   title: "Trạng thái",
-                  render: (row) => <Badge>{flightLabels[row.flight_status] ?? row.flight_status}</Badge>
+                  render: (row) => (
+                    <Badge {...bookingStatusBadgeProps(row.flight_status)}>
+                      {flightLabels[row.flight_status] ?? row.flight_status}
+                    </Badge>
+                  )
                 },
                 {
                   key: "pilot",
@@ -181,12 +187,15 @@ export const BookingsPage = () => {
                   render: (row) => (
                     <Button
                       variant="secondary"
+                      className="admin-icon-action"
+                      aria-label={`Xem chi tiết ${row.code}`}
+                      title="Xem chi tiết"
                       onClick={(event) => {
                         event.stopPropagation();
                         navigate(`/bookings/${row.code}`);
                       }}
                     >
-                      Xem chi tiết
+                      <ChevronRight size={18} strokeWidth={2.5} aria-hidden="true" />
                     </Button>
                   )
                 }

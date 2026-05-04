@@ -4,6 +4,7 @@ import { useForm } from "react-hook-form";
 import { useNavigate } from "react-router-dom";
 import { Badge, Button, Card, Dialog, Field, Input, Panel, Textarea } from "@paragliding/ui";
 import type { ServiceFeature, ServiceFeatureWritePayload, ServicePackage } from "@paragliding/api-client";
+import { ChevronRight, Trash2 } from "lucide-react";
 import { adminApi } from "@/shared/config/api";
 import { routes } from "@/shared/config/routes";
 import { formatCurrency } from "@/shared/lib/format";
@@ -70,21 +71,13 @@ export const ServicesPage = () => {
       <div className="portal-stack">
         <div className="portal-heading">
           <div className="portal-heading__text">
-            <Badge>Quản lý dịch vụ</Badge>
-            <h1>Dịch vụ</h1>
-            <p>Quản lý gói dịch vụ và danh sách dịch vụ đi kèm để dùng lại khi tạo hoặc chỉnh sửa gói.</p>
+            <h1>Quản lý gói Dịch vụ</h1>
           </div>
           <Button onClick={() => navigate("/services/new")}>Tạo gói dịch vụ</Button>
         </div>
 
         <Card className="admin-list-card">
           <Panel className="admin-stack">
-            <div className="admin-card__header">
-              <div>
-                <h3>Danh sách gói dịch vụ</h3>
-                <p>Bấm vào từng gói để chỉnh sửa thông tin, giá và dịch vụ đi kèm.</p>
-              </div>
-            </div>
             <DataTable<ServicePackage>
               data={servicesQuery.data ?? []}
               getRowKey={(row) => row.slug}
@@ -114,7 +107,11 @@ export const ServicesPage = () => {
                 {
                   key: "status",
                   title: "Trạng thái",
-                  render: (row) => <Badge tone={row.active ? "success" : "danger"}>{row.active ? "Đang bán" : "Tạm tắt"}</Badge>
+                  render: (row) => (
+                    <Badge className="admin-status-badge" tone={row.active ? "success" : "danger"}>
+                      {row.active ? "Đang bán" : "Tạm tắt"}
+                    </Badge>
+                  )
                 },
                 {
                   key: "open",
@@ -122,12 +119,15 @@ export const ServicesPage = () => {
                   render: (row) => (
                     <Button
                       variant="secondary"
+                      className="admin-icon-action"
+                      aria-label={`Xem chi tiết ${row.name}`}
+                      title="Xem chi tiết"
                       onClick={(event) => {
                         event.stopPropagation();
                         navigate(`/services/${row.slug}`);
                       }}
                     >
-                      Xem chi tiết
+                      <ChevronRight size={18} strokeWidth={2.5} aria-hidden="true" />
                     </Button>
                   )
                 }
@@ -150,8 +150,8 @@ export const ServicesPage = () => {
               onSubmit={featureForm.handleSubmit((values) =>
                 saveFeatureMutation.mutate({
                   ...values,
-                  name_en: values.name.trim(),
-                  description_en: values.description.trim()
+                  name_en: values.name_en?.trim() || values.name.trim(),
+                  description_en: values.description_en?.trim() || values.description.trim()
                 })
               )}
             >
@@ -159,10 +159,16 @@ export const ServicesPage = () => {
                 <Field label="Tên dịch vụ đi kèm">
                   <Input {...featureForm.register("name", { required: true })} />
                 </Field>
+                <Field label="Tên dịch vụ đi kèm (EN)">
+                  <Input {...featureForm.register("name_en")} />
+                </Field>
               </div>
               <div className="inline-field-grid inline-field-grid--two">
                 <Field label="Mô tả ngắn">
                   <Textarea {...featureForm.register("description")} />
+                </Field>
+                <Field label="Mô tả ngắn (EN)">
+                  <Textarea {...featureForm.register("description_en")} />
                 </Field>
               </div>
               <label className="admin-checkbox">
@@ -199,7 +205,11 @@ export const ServicesPage = () => {
                 {
                   key: "active",
                   title: "Trạng thái",
-                  render: (row) => <Badge tone={row.active ? "success" : "danger"}>{row.active ? "Đang dùng" : "Tạm tắt"}</Badge>
+                  render: (row) => (
+                    <Badge className="admin-status-badge" tone={row.active ? "success" : "danger"}>
+                      {row.active ? "Đang dùng" : "Tạm tắt"}
+                    </Badge>
+                  )
                 },
                 {
                   key: "actions",
@@ -209,8 +219,14 @@ export const ServicesPage = () => {
                       <Button variant="secondary" onClick={() => setFeatureEditing(row)}>
                         Sửa
                       </Button>
-                      <Button variant="secondary" onClick={() => setFeaturePendingDelete(row)}>
-                        Xóa
+                      <Button
+                        variant="secondary"
+                        className="admin-icon-action admin-icon-action--danger"
+                        aria-label={`Xóa ${row.name}`}
+                        title="Xóa"
+                        onClick={() => setFeaturePendingDelete(row)}
+                      >
+                        <Trash2 size={17} strokeWidth={2.4} aria-hidden="true" />
                       </Button>
                     </div>
                   )

@@ -50,11 +50,8 @@ export const AccountsPage = () => {
       <div className="portal-stack">
         <div className="portal-heading">
           <div className="portal-heading__text">
-            <Badge>Quản lý tài khoản</Badge>
-            <h1>Tài khoản</h1>
-            <p>Danh sách tài khoản được lọc theo vai trò. Bấm vào tài khoản để xem chi tiết.</p>
+            <h1>Quản lý Tài khoản</h1>
           </div>
-          <div className="portal-heading__note">Trạng thái hoạt động không hiển thị trong giao diện quản trị.</div>
         </div>
 
         {isCreateOpen ? (
@@ -63,7 +60,6 @@ export const AccountsPage = () => {
               <div className="admin-card__header">
                 <div>
                   <h3>Thêm tài khoản mới</h3>
-                  <p>Quản trị viên tạo trực tiếp tài khoản phi công hoặc quản trị. Khách hàng đăng nhập bằng email từ website.</p>
                 </div>
                 <Button variant="secondary" onClick={() => setIsCreateOpen(false)}>
                   Đóng
@@ -109,20 +105,16 @@ export const AccountsPage = () => {
 
         <Card className="admin-list-card">
           <Panel className="admin-stack">
-            <div className="admin-card__header">
-              <div>
-                <h3>Danh sách tài khoản</h3>
-                <p>Bộ lọc vai trò giúp xem nhanh quản trị viên, phi công hoặc khách hàng.</p>
-              </div>
-              <div className="table-actions--inline">
+            <div className="admin-card__header admin-account-toolbar">
+              <div className="table-actions--inline admin-account-toolbar__filter">
                 <Select value={roleFilter} onChange={(event) => setRoleFilter(event.target.value)}>
                   <option value="">Tất cả vai trò</option>
                   <option value="ADMIN">Quản trị viên</option>
                   <option value="PILOT">Phi công</option>
                   <option value="CUSTOMER">Khách hàng</option>
                 </Select>
-                <Button onClick={() => setIsCreateOpen(true)}>Thêm tài khoản</Button>
               </div>
+              <Button onClick={() => setIsCreateOpen(true)}>Thêm tài khoản</Button>
             </div>
 
             <DataTable<Account>

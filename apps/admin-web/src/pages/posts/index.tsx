@@ -3,6 +3,7 @@ import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useNavigate } from "react-router-dom";
 import { Badge, Button, Card, Dialog, Panel } from "@paragliding/ui";
 import type { Post } from "@paragliding/api-client";
+import { ChevronRight, Trash2 } from "lucide-react";
 import { adminApi } from "@/shared/config/api";
 import { AdminLayout } from "@/widgets/layout/admin-layout";
 import { DataTable } from "@/widgets/data-table/data-table";
@@ -30,9 +31,7 @@ export const PostsPage = () => {
       <div className="portal-stack">
         <div className="portal-heading">
           <div className="portal-heading__text">
-            <Badge>Quản lý nội dung</Badge>
-            <h1>Bài viết</h1>
-            <p>Bấm vào một bài viết để mở trang chi tiết và sửa nội dung.</p>
+            <h1>Quản lý Bài viết</h1>
           </div>
           <Button onClick={() => navigate("/posts/new")}>Tạo bài viết</Button>
         </div>
@@ -58,7 +57,11 @@ export const PostsPage = () => {
                 {
                   key: "status",
                   title: "Trạng thái",
-                  render: (row) => <Badge tone={row.published ? "success" : "danger"}>{row.published ? "Đã xuất bản" : "Bản nháp"}</Badge>
+                  render: (row) => (
+                    <Badge className="admin-status-badge" tone={row.published ? "success" : "danger"}>
+                      {row.published ? "Đã xuất bản" : "Bản nháp"}
+                    </Badge>
+                  )
                 },
                 {
                   key: "date",
@@ -72,21 +75,27 @@ export const PostsPage = () => {
                     <div className="table-actions--inline">
                       <Button
                         variant="secondary"
+                        className="admin-icon-action"
+                        aria-label={`Xem chi tiết ${row.title}`}
+                        title="Xem chi tiết"
                         onClick={(event) => {
                           event.stopPropagation();
                           navigate(`/posts/${row.slug}`);
                         }}
                       >
-                        Xem chi tiết
+                        <ChevronRight size={18} strokeWidth={2.5} aria-hidden="true" />
                       </Button>
                       <Button
                         variant="secondary"
+                        className="admin-icon-action admin-icon-action--danger"
+                        aria-label={`Xóa ${row.title}`}
+                        title="Xóa"
                         onClick={(event) => {
                           event.stopPropagation();
                           setPostPendingDelete(row);
                         }}
                       >
-                        Xóa
+                        <Trash2 size={17} strokeWidth={2.4} aria-hidden="true" />
                       </Button>
                     </div>
                   )

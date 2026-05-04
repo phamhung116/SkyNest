@@ -6,7 +6,7 @@ import { Badge, Card, Container, Panel } from "@paragliding/ui";
 import { customerApi } from "@/shared/config/api";
 import { formatDate } from "@/shared/lib/format";
 import { getForecastMonthKeys, getUpcomingWeatherDays, WEATHER_FORECAST_DAYS } from "@/shared/lib/forecast";
-import { localizePostContent, localizePostTitle, repairFlightConditionLabel } from "@/shared/lib/localized-content";
+import { repairFlightConditionLabel, resolvePostContentSource, resolvePostTitleSource } from "@/shared/lib/localized-content";
 import { useTranslatedText } from "@/shared/lib/use-translated-text";
 import { useI18n } from "@/shared/providers/i18n-provider";
 import { SiteLayout, Banner } from "@/widgets/layout/site-layout";
@@ -54,10 +54,11 @@ export const PostDetailPage = () => {
   const upcomingForecast = useMemo(() => getUpcomingWeatherDays(forecast, today), [forecast, today]);
   const todayWeather = upcomingForecast[0];
   const weatherRows = upcomingForecast.slice(0, 7);
-  const localizedPostTitle = data ? localizePostTitle(data, locale) : "";
-  const localizedPostContent = data ? localizePostContent(data, locale) : "";
-  const translatedPostTitle = useTranslatedText(localizedPostTitle);
-  const translatedPostContent = useTranslatedText(localizedPostContent, {
+  const postTitleSource = data ? resolvePostTitleSource(data, locale) : { text: "", source: "vi" as const };
+  const postContentSource = data ? resolvePostContentSource(data, locale) : { text: "", source: "vi" as const };
+  const translatedPostTitle = useTranslatedText(postTitleSource.text, { source: postTitleSource.source });
+  const translatedPostContent = useTranslatedText(postContentSource.text, {
+    source: postContentSource.source,
     format: "html"
   });
 
@@ -71,8 +72,8 @@ export const PostDetailPage = () => {
     );
   }
 
-  const postTitle = translatedPostTitle || localizedPostTitle;
-  const postContent = translatedPostContent || localizedPostContent;
+  const postTitle = translatedPostTitle || postTitleSource.text;
+  const postContent = translatedPostContent || postContentSource.text;
 
   return (
     <SiteLayout>

@@ -9,6 +9,7 @@ import { customerApi } from "@/shared/config/api";
 import { accountSupportNotes } from "@/shared/constants/customer-content";
 import { flightStatusLabels, paymentStatusLabels } from "@/shared/constants/status";
 import { routes } from "@/shared/config/routes";
+import { resolveBookingServiceNameSource } from "@/shared/lib/localized-content";
 import { useTranslatedText } from "@/shared/lib/use-translated-text";
 import { useI18n } from "@/shared/providers/i18n-provider";
 import { SiteLayout } from "@/widgets/layout/site-layout";
@@ -23,8 +24,9 @@ const normalizePhone = (value: string) => {
 type AccountBooking = Awaited<ReturnType<typeof customerApi.getMyBookings>>[number];
 
 const AccountBookingCard = ({ booking }: { booking: AccountBooking }) => {
-  const { tText } = useI18n();
-  const serviceName = useTranslatedText(booking.service_name);
+  const { locale, tText } = useI18n();
+  const serviceNameSource = resolveBookingServiceNameSource(booking, locale);
+  const serviceName = useTranslatedText(serviceNameSource.text, { source: serviceNameSource.source });
 
   return (
     <article className="account-booking-card">
@@ -104,7 +106,7 @@ export const AccountPage = () => {
 
   return (
     <SiteLayout>
-      <section className="section">
+      <section className="section customer-flow-section">
         <Container className="stack">
           <div className="account-layout">
             <Card>
