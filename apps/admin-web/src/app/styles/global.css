@@ -848,14 +848,14 @@ body {
 
 .post-editor-main {
   display: grid;
-  min-height: 100%;
+  min-height: 760px;
 }
 
 .rich-text-editor {
   display: grid;
-  grid-template-rows: auto minmax(0, 1fr);
   min-width: 0;
-  min-height: calc(100vh - 220px);
+  height: 100%;
+  min-height: 760px;
   border: 1px solid rgba(126, 17, 43, 0.14);
   border-radius: 8px;
   overflow: hidden;
@@ -864,7 +864,8 @@ body {
 }
 
 .rich-text-editor .tox.tox-tinymce {
-  min-height: 680px;
+  height: 100% !important;
+  min-height: 760px;
   border: 0;
   border-radius: 8px;
 }
@@ -1024,10 +1025,12 @@ body {
   }
 
   .rich-text-editor {
-    min-height: auto;
+    height: auto;
+    min-height: 520px;
   }
 
   .rich-text-editor .tox.tox-tinymce {
+    height: 520px !important;
     min-height: 520px;
   }
 
